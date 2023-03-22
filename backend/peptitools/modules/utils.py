@@ -16,6 +16,8 @@ class ConfigTool:
 
     def __init__(self, config_module_name, data, config, is_file, is_fasta=True):
         self.data = data
+        self.config = config
+        self.static_folder = config["folders"]["static_folder"]
         self.temp_folder = config["folders"]["temp_folder"]
         self.temp_file_path = f"{self.temp_folder}/{str(round(random() * 10**20))}"
         self.temp_csv_file = None
@@ -68,6 +70,8 @@ class ConfigTool:
         """Create a dataframe from fasta text"""
         return pd.DataFrame(parse_fasta(fasta))
 
+    def save_csv_on_static(self, csv, path):
+        csv.to_csv(f"{self.static_folder}/{path}", index=False)
 
 class CsvFile:
     def __init__(self, path, config_module):

@@ -7,18 +7,13 @@ import pandas as pd
 from joblib import Parallel, delayed
 from scipy.spatial import distance
 
-from peptitools.modules.clustering_methods.graph_clustering import GraphClustering
-from peptitools.modules.encoding_strategies import (
-    run_fft_encoding,
-    run_physicochemical_properties,
-)
+from peptitools.modules.machine_learning_tools.clustering_methods.graph_clustering import GraphClustering
 
 
 class DistanceClustering(GraphClustering):
     """Distance Clustering class"""
-
-    def __init__(self, data, options, is_file, config, db):
-        super().__init__(data, is_file, config)
+    def __init__(self, data, options, is_file, config):
+        super().__init__(data, options, is_file, config)
         static_folder = config["folders"]["static_folder"]
         rand_number = str(round(random() * 10**20))
         self.dataset_encoded_path = f"{static_folder}/{rand_number}.csv"
@@ -26,30 +21,6 @@ class DistanceClustering(GraphClustering):
         self.dataset_encoded = None
         # self.path_config_aaindex_encoder = config["folders"]["path_aa_index"]
         self.cores = mp.cpu_count()
-        self.df_encoder = db.get_encoder()
-
-    def __process_encoding_stage(self):
-        """Encode sequences using selected method"""
-        with open(self.temp_file_path, "r", encoding="utf-8") as file:
-            self.data = self.create_df(file.read())
-        encoding_option = self.options["encoding"]
-
-        if encoding_option == "phisicochemical_properties":
-            physicochemical_encoding = (
-                run_physicochemical_properties.RunPhysicochemicalProperties(
-                    self.data, self.options["selected_property"], self.df_encoder
-                )
-            )
-            self.dataset_encoded = physicochemical_encoding.run_parallel_encoding()
-
-        elif encoding_option == "digital_signal_processing":
-            selected_property = self.options["selected_property"]
-            fft_encoding = run_fft_encoding.RunFftEncoding(
-                self.data, selected_property, self.df_encoder
-            )
-            fft_encoding.run_parallel_encoding()
-            self.dataset_encoded = fft_encoding.appy_fft()
-        self.dataset_encoded.reset_index(drop=True, inplace=True)
 
     def __get_vector(self, index, dataset, column_ignore):
         """Ignore a column"""
@@ -120,7 +91,7 @@ class DistanceClustering(GraphClustering):
 
     def run_process(self):
         """Run all distance clustering process"""
-        self.__process_encoding_stage()
+        self.process_encoding()
         self.__calculate_distance()
         self.filter(self.options["filter_type"])
         self.create_graph()

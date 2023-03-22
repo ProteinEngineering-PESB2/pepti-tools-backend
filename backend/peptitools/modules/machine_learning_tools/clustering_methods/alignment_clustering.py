@@ -1,15 +1,14 @@
 """Alignment clustering module"""
 import pandas as pd
 
-from peptitools.modules.clustering_methods.graph_clustering import GraphClustering
-from peptitools.modules.msa_module import MultipleSequenceAlignment
+from peptitools.modules.machine_learning_tools.clustering_methods.graph_clustering import GraphClustering
+from peptitools.modules.bioinformatic_tools.msa_module import MultipleSequenceAlignment
 
 
 class AlignmentClustering(GraphClustering):
     """Alignment clustering class"""
-
     def __init__(self, data, is_file, config):
-        super().__init__(data, is_file, config)
+        super().__init__(data, {}, is_file, config)
         self.msa = MultipleSequenceAlignment(
             data, is_file, config, config_module="clustering"
         )

@@ -3,22 +3,20 @@ import configparser
 
 from flask import Blueprint, request
 
-from peptitools.modules.alignment_clustering import AlignmentClustering
-from peptitools.modules.clustering_process import Clustering
-from peptitools.modules.database import Database
-from peptitools.modules.distance_clustering import DistanceClustering
-from peptitools.modules.encoding import Encoding
+from peptitools.modules.machine_learning_tools.clustering_methods.alignment_clustering import AlignmentClustering
+from peptitools.modules.machine_learning_tools.clustering_methods.clustering_process import Clustering
+from peptitools.modules.machine_learning_tools.clustering_methods.distance_clustering import DistanceClustering
+from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
-# from peptitools.modules.alignment_clustering import alignment_clustering
-from peptitools.modules.pca_process import PCA
-from peptitools.modules.supervised_learning import SupervisedLearning
+#from peptitools.modules.alignment_clustering import alignment_clustering
+#from peptitools.modules.pca_process import PCA
+#from peptitools.modules.supervised_learning import SupervisedLearning
 from peptitools.modules.utils import Interface
 
 ##Reads config file and asign folder names.
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-db = Database(config)
 
 machine_learning_blueprint = Blueprint("machine_learning_blueprint", __name__)
 
@@ -27,23 +25,22 @@ machine_learning_blueprint = Blueprint("machine_learning_blueprint", __name__)
 def apply_encoding():
     """Encode a fasta file or text"""
     data, options, is_file = Interface(request).parse_with_options()
-    code = Encoding(data, options, is_file, config, db)
+    code = Encoding(data, options, is_file, config)
     check = code.check
     if check["status"] == "error":
         return check
-    result = code.process()
+    result = code.process_encoding()
     return {"result": result}
-
 
 @machine_learning_blueprint.route("/clustering/", methods=["POST"])
 def api_clustering():
     """It performs clustering from a fasta file or text"""
     data, options, is_file = Interface(request).parse_with_options()
-    clustering_object = Clustering(data, options, is_file, config, db)
+    clustering_object = Clustering(data, options, is_file, config)
     check = clustering_object.check
     if check["status"] == "error":
         return check
-    result = clustering_object.process_by_options()
+    result = clustering_object.process_clustering()
     return {"result": result}
 
 
@@ -63,14 +60,14 @@ def api_alignment_clustering():
 def api_distance_clustering():
     """It performs clustering from a fasta file or text"""
     data, options, is_file = Interface(request).parse_with_options()
-    clustering_object = DistanceClustering(data, options, is_file, config, db)
+    clustering_object = DistanceClustering(data, options, is_file, config)
     check = clustering_object.check
     if check["status"] == "error":
         return check
     result = clustering_object.run_process()
     return {"result": result}
 
-
+'''
 @machine_learning_blueprint.route("/pca/", methods=["POST"])
 def api_pca():
     """It performs a PCA from a stored dataframe"""
@@ -90,3 +87,4 @@ def api_supervised_learning():
     result = sl_obj.run()
     job_path = sl_obj.job_path
     return {"result": result, "job_path": job_path}
+'''

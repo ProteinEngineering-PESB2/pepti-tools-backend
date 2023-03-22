@@ -7,103 +7,26 @@ import numpy as np
 from matplotlib.colors import to_hex
 from scipy import stats
 
-from peptitools.modules.clustering_methods import (
+from peptitools.modules.machine_learning_tools.clustering_methods import (
     clustering_algorithm,
     evaluation_performances,
 )
-from peptitools.modules.encoding_strategies import (
-    run_fft_encoding,
-    run_one_hot,
-    run_physicochemical_properties,
-)
 from peptitools.modules.utils import ConfigTool
+from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
-
-class Clustering(ConfigTool):
+class Clustering(Encoding):
     """Clustering process class"""
 
-    def __init__(self, data, options, is_file, config, db):
-        super().__init__("clustering", data, config, is_file)
+    def __init__(self, data, options, is_file, config):
+        super().__init__(data, options, is_file, config)
         static_folder = config["folders"]["static_folder"]
         rand_number = str(round(random() * 10**20))
         self.dataset_encoded_path = f"{static_folder}/{rand_number}.csv"
         self.options = options
-        self.dataset_encoded = None
-        if self.check == {"status": "success"}:
-            self.check = self.check_options()
-        self.df_encoder = db.get_encoder()
 
-    def check_options(self):
-        """Function for apply restriction for numeric parameters."""
-        wrong_param = []
-        for key in list(self.options["params"].keys()):
-            if key == "k_value":
-                if not isinstance(self.options["params"]["k_value"], int) or (
-                    self.options["params"]["k_value"] < 2
-                ):
-                    wrong_param.append("k_value")
-            if key == "min_samples":
-                if (
-                    isinstance(self.options["params"]["min_samples"], int)
-                    and self.options["params"]["min_samples"] < 1
-                ):
-                    wrong_param.append("min_samples")
-                if isinstance(self.options["params"]["min_samples"], float) and (
-                    self.options["params"]["min_samples"] > 1
-                    or self.options["params"]["optics"] < 0
-                ):
-                    wrong_param.append("min_samples")
-            if key == "xi":
-                if self.options["params"]["xi"] > 1 or self.options["params"]["xi"] < 0:
-                    wrong_param.append("xi")
-            if key == "min_cluster_size":
-                if (
-                    isinstance(self.options["params"]["min_cluster_size"], int)
-                    and self.options["params"]["min_cluster_size"] < 1
-                ):
-                    wrong_param.append("min_cluster_size")
-
-                if isinstance(self.options["params"]["min_cluster_size"], float) and (
-                    self.options["params"]["min_cluster_size"] > 1
-                    or self.options["params"]["min_cluster_size"] < 0
-                ):
-                    wrong_param.append("min_cluster_size")
-        if not wrong_param:
-            return {"status": "success"}
-        return {
-            "status": "error",
-            "description": f"Parameter {', '.join(wrong_param)} not valid",
-        }
-
-    def process_encoding_stage(self):
-        """Encode sequences using selected method"""
-        with open(self.temp_file_path, "r", encoding="utf-8") as file:
-            self.data = self.create_df(file.read())
-        encoding_option = self.options["encoding"]
-
-        if encoding_option == "one_hot_encoding":
-            one_hot_encoding = run_one_hot.RunOneHotEncoding(self.data)
-            self.dataset_encoded = one_hot_encoding.run_parallel_encoding()
-
-        elif encoding_option == "phisicochemical_properties":
-            physicochemical_encoding = (
-                run_physicochemical_properties.RunPhysicochemicalProperties(
-                    self.data, self.options["selected_property"], self.df_encoder
-                )
-            )
-            self.dataset_encoded = physicochemical_encoding.run_parallel_encoding()
-
-        elif encoding_option == "digital_signal_processing":
-            selected_property = self.options["selected_property"]
-            fft_encoding = run_fft_encoding.RunFftEncoding(
-                self.data, selected_property, self.df_encoder
-            )
-            fft_encoding.run_parallel_encoding()
-            self.dataset_encoded = fft_encoding.appy_fft()
-
-    def process_by_options(self):
+    def process_clustering(self):
         """Apply clustering process"""
-        self.process_encoding_stage()
+        self.process_encoding()
         dataset_to_cluster = self.dataset_encoded.copy()
         dataset_to_cluster.drop(["id"], inplace=True, axis=1)
         clustering_process = clustering_algorithm.ApplyClustering(dataset_to_cluster)
@@ -141,7 +64,6 @@ class Clustering(ConfigTool):
         response = {}
 
         if clustering_process.response_apply == 0:  # Success
-            self.dataset_encoded["sequence"] = self.data.sequence
             self.dataset_encoded["label"] = list(clustering_process.labels)
             self.dataset_encoded.to_csv(self.dataset_encoded_path, index=False)
             data_json = json.loads(

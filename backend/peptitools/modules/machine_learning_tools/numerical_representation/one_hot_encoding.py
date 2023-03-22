@@ -1,4 +1,4 @@
-from numerical_representation.encoder import Encoder
+from peptitools.modules.machine_learning_tools.numerical_representation.encoder import Encoder
 class OneHotEncoding(Encoder):
 
     def __init__(self, dataset=None, name_column_id=None, name_column_seq=None, n_cores = None):

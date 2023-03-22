@@ -11,20 +11,20 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 
-from peptitools.modules.clustering_methods.transformation_data import Transformer
-from peptitools.modules.encoding_strategies import (
-    run_fft_encoding,
-    run_one_hot,
-    run_physicochemical_properties,
-)
-from peptitools.modules.training_supervised_learning.run_algorithm import RunAlgorithm
+from peptitools.modules.machine_learning_tools.numerical_representation.one_hot_encoding import OneHotEncoding
+from peptitools.modules.machine_learning_tools.numerical_representation.physicochemical_properties import Physicochemical
+from peptitools.modules.machine_learning_tools.numerical_representation.fft_encoding import FftEncoding
+
+from peptitools.modules.machine_learning_tools.clustering_methods.transformation_data import Transformer
+from peptitools.modules.machine_learning_tools.encoding import Encoding
+from peptitools.modules.machine_learning_tools.training_supervised_learning.run_algorithm import RunAlgorithm
 from peptitools.modules.utils import ConfigTool
 
 
-class SupervisedLearning(ConfigTool):
+class SupervisedLearning(Encoding):
     """Supervised Learning class"""
 
-    def __init__(self, data, options, is_file, config, db):
+    def __init__(self, data, options, is_file, config):
         super().__init__("supervised_learning", data, config, is_file, is_fasta=False)
         static_folder = config["folders"]["static_folder"]
         rand_number = str(round(random() * 10**20))
@@ -112,24 +112,17 @@ class SupervisedLearning(ConfigTool):
 
     def process_encoding_stage(self):
         """Encoding process"""
-        encoding_option = self.options["encoding"]
-        if encoding_option == "one_hot_encoding":
-            one_hot_encoding = run_one_hot.RunOneHotEncoding(self.data)
-            self.dataset_encoded = one_hot_encoding.run_parallel_encoding()
-        elif encoding_option == "phisicochemical_properties":
-            physicochemical_encoding = (
-                run_physicochemical_properties.RunPhysicochemicalProperties(
-                    self.data, self.options["selected_property"], self.df_encoder
-                )
-            )
-            self.dataset_encoded = physicochemical_encoding.run_parallel_encoding()
-        elif encoding_option == "digital_signal_processing":
-            selected_property = self.options["selected_property"]
-            fft_encoding = run_fft_encoding.RunFftEncoding(
-                self.data, selected_property, self.df_encoder
-            )
-            fft_encoding.run_parallel_encoding()
-            self.dataset_encoded = fft_encoding.appy_fft()
+        if self.options["encoding"] == "one_hot_encoding":
+            one_hot_encoding = OneHotEncoding(self.df, "id", "sequence")
+            res = one_hot_encoding.encode_dataset()
+        if self.options["encoding"] in ["physicochemical_properties", "digital_signal_processing"]:
+            physicochemical = Physicochemical(self.df, self.options["property"], self.encoder_dataset, "id", "sequence")
+            res = physicochemical.encode_dataset()
+        if self.options["encoding"] == "digital_signal_processing":
+            fft = FftEncoding(res, "id")
+            res = fft.encoding_dataset()
+        self.save_csv_on_static(res, self.output_path)
+        return {"path": self.output_path}
 
     def dump_joblib(self):
         """Save model"""

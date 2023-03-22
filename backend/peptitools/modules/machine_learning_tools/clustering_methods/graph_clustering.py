@@ -9,13 +9,13 @@ import pandas as pd
 from matplotlib.colors import to_hex
 
 from peptitools.modules.utils import ConfigTool
+from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
-
-class GraphClustering(ConfigTool):
+class GraphClustering(Encoding):
     """Graph clustering class"""
 
-    def __init__(self, data, is_file, config):
-        super().__init__("clustering", data, config, is_file)
+    def __init__(self, data, options, is_file, config):
+        super().__init__(data, options, is_file, config)
         self.graph_data = nx.Graph()
         self.partition = None
         self.modularity_value = None
@@ -26,16 +26,15 @@ class GraphClustering(ConfigTool):
         """obtener cuartiles para filtro y filtramos"""
         q_filter = None
         if filter_type == "nearest":
-            q_filter = np.quantile(self.df_data_distance["distance"], 0.25)
+            q_filter = np.quantile(self.df_data_distance["distance"], 0.1)
             filter_data = self.df_data_distance.loc[
                 self.df_data_distance["distance"] <= q_filter
             ]
         elif filter_type == "farthest":
-            q_filter = np.quantile(self.df_data_distance["distance"], 0.75)
+            q_filter = np.quantile(self.df_data_distance["distance"], 0.9)
             filter_data = self.df_data_distance.loc[
                 self.df_data_distance["distance"] >= q_filter
             ]
-
         # filtrar
         self.filter_data = filter_data.reset_index(drop=True)
 

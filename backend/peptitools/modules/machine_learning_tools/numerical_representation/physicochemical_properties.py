@@ -1,8 +1,8 @@
 import pandas as pd
-from numerical_representation.encoder import Encoder
+from peptitools.modules.machine_learning_tools.numerical_representation.encoder import Encoder
 
 class Physicochemical(Encoder):
-    def __init__(self, dataset, property_encoder, dataset_encoder_path, name_column_seq, name_column_id, n_cores = None):
+    def __init__(self, dataset, property_encoder, dataset_encoder_path, name_column_id, name_column_seq, n_cores = None):
         super().__init__(dataset, name_column_id, name_column_seq, n_cores)
         self.dataset_encoder = pd.read_csv(dataset_encoder_path, index_col=0)
         self.property_encoder = property_encoder

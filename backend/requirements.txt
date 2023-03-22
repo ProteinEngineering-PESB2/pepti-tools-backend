@@ -1,3 +1,4 @@
+bio-embeddings
 Flask
 flask-cors
 pandas
@@ -8,4 +9,3 @@ matplotlib
 networkx
 python-louvain
 seaborn
-bio-embeddings

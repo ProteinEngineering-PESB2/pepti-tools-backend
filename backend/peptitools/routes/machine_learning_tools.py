@@ -9,7 +9,7 @@ from peptitools.modules.machine_learning_tools.clustering_methods.distance_clust
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
 #from peptitools.modules.alignment_clustering import alignment_clustering
-#from peptitools.modules.pca_process import PCA
+from peptitools.modules.machine_learning_tools.pca_process import PCA
 #from peptitools.modules.supervised_learning import SupervisedLearning
 from peptitools.modules.utils import Interface
 
@@ -67,7 +67,6 @@ def api_distance_clustering():
     result = clustering_object.run_process()
     return {"result": result}
 
-'''
 @machine_learning_blueprint.route("/pca/", methods=["POST"])
 def api_pca():
     """It performs a PCA from a stored dataframe"""
@@ -75,7 +74,7 @@ def api_pca():
     result, path = pca.apply_pca()
     return {"result": result, "path": path}
 
-
+'''
 @machine_learning_blueprint.route("/supervised_learning/", methods=["POST"])
 def api_supervised_learning():
     """It performs a Supervised learning from a csv file"""

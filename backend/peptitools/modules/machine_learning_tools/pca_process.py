@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.colors import to_hex
 
-from peptitools.modules.clustering_methods.transformation_data import Transformer
+from peptitools.modules.machine_learning_tools.clustering_methods.transformation_data import Transformer
 
 
 class PCA:
@@ -21,7 +21,7 @@ class PCA:
             self.kernel = None
         self.data = pd.read_csv(self.path)
         self.dataset_to_transform = self.data[
-            [col for col in self.data.columns if "P_" in col]
+            [col for col in self.data.columns if "p_" in col]
         ]
         self.transformer = Transformer()
         self.traces = []
@@ -37,7 +37,6 @@ class PCA:
             )
         self.pca = pd.DataFrame(data=pca_result, columns=["X", "Y"])
         self.pca["id"] = self.data["id"]
-        self.pca["sequence"] = self.data["sequence"]
         self.pca["label"] = self.data["label"]
         self.__generate_colors()
         self.__create_traces()

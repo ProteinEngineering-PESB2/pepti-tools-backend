@@ -1,0 +1,11 @@
+Flask
+flask-cors
+pandas
+modlamp
+biopython
+scipy
+matplotlib
+networkx
+python-louvain
+seaborn
+bio-embeddings

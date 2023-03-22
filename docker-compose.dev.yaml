@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  backend:
+    image: peptitools-backend-dev
+    container_name: peptitools-backend-dev
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend/peptitools:/app/peptitools
+      - ./backend/config.ini:/app/config.ini
+      - ./backend/activity_models:/app/activity_models
+    ports:
+      - "8001:8001"
+    restart: "always"

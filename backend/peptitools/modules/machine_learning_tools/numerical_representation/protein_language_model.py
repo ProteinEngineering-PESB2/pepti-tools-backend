@@ -1,20 +1,17 @@
 import bio_embeddings.embed
-from bio_embeddings.embed.bepler_embedder import BeplerEmbedder
-from bio_embeddings.embed import ESM1bEmbedder
-from bio_embeddings.embed import ESMEmbedder
-from bio_embeddings.embed import FastTextEmbedder
-from bio_embeddings.embed import GloveEmbedder
-from bio_embeddings.embed import OneHotEncodingEmbedder
-from bio_embeddings.embed import PLUSRNNEmbedder
-from bio_embeddings.embed import ProtTransAlbertBFDEmbedder
-from bio_embeddings.embed import SeqVecEmbedder
-from bio_embeddings.embed import UniRepEmbedder
-from bio_embeddings.embed import Word2VecEmbedder
+
+
+
+
+
+
+
+
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
 
-class UsingBioembeddings(object):
+class Bioembeddings(object):
 
     def __init__(
             self,
@@ -55,37 +52,23 @@ class UsingBioembeddings(object):
             self.np_data[idx] = self.embedder.reduce_per_protein(embed)
 
     def apply_bepler(self):
+        from bio_embeddings.embed import BeplerEmbedder
         return self.__apply_embedding(BeplerEmbedder)
-    
-    def apply_esm1b(self):
-        return self.__apply_embedding(ESM1bEmbedder)
-
-    def apply_esme(self):
-        return self.__apply_embedding(ESMEmbedder)
-
 
     def apply_fasttext(self):
+        from bio_embeddings.embed import FastTextEmbedder
         return self.__apply_embedding(FastTextEmbedder)
 
     def apply_glove(self):
+        from bio_embeddings.embed import GloveEmbedder
         return self.__apply_embedding(GloveEmbedder)
 
-    def apply_onehot(self):
-        return self.__apply_embedding(OneHotEncodingEmbedder)
-
     def apply_plus_rnn(self):
+        from bio_embeddings.embed import PLUSRNNEmbedder
         return self.__apply_embedding(PLUSRNNEmbedder)
 
-    def apply_prottrans_albert(self):
-        return self.__apply_embedding(ProtTransAlbertBFDEmbedder)
-
-    def apply_seqvec(self):
-        return self.__apply_embedding(SeqVecEmbedder)
-    
-    def apply_unirep(self):
-        return self.__apply_embedding(UniRepEmbedder)
-
     def apply_word2vec(self):
+        from bio_embeddings.embed import Word2VecEmbedder
         return self.__apply_embedding(Word2VecEmbedder)
     
     def parse_output(self):

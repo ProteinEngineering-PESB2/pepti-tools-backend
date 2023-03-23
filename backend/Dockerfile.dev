@@ -4,7 +4,7 @@ FROM continuumio/miniconda3
 RUN apt-get update && \
     apt-get -y install --no-install-recommends\
     metastudent \
-    wget gzip make\
+    wget gzip make gcc g++ python-dev\
     git && rm -rf /var/lib/apt/lists/*
 
 #Conda
@@ -13,9 +13,11 @@ RUN echo "conda activate peptitools" >> ~/.bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 RUN conda install -c bioconda pfam_scan
 RUN conda install -c bioconda clustalo
-RUN conda install pytorch torchvision torchaudio cpuonly -c pytorch
 RUN conda install -c conda-forge bio-embeddings
+RUN conda install -c conda-forge bio-embeddings-plus
+RUN conda install -c conda-forge bio-embeddings-bepler
 
+WORKDIR /
 # Instalación de dependencia
 COPY requirements.txt .
 RUN pip install -r requirements.txt

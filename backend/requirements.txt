@@ -9,3 +9,4 @@ matplotlib
 networkx
 python-louvain
 seaborn
+jax_unirep

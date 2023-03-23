@@ -1,23 +1,5 @@
 @api = http://localhost:8001/api
 
-POST {{api}}/alignment/
-Content-Type: application/json
-
-{
-    "data": ">sp|P40337|VHL_HUMAN von Hippel-Lindau disease tumor suppressor OS=Homo sapiens OX=9606 GN=VHL PE=1 SV=2\nMPRRAENWDEAEVGAEEAGVEEYGPEEDGGEESGAEESGPEESGPEELGAEEEMEAGRPR\nPVLRSVNSREPSQVIFCNRSPRVVLPVWLNFDGEPQPYPTLPPGTGRRIHSYRGHLWLFR"
-}
-
-
-###
-
-POST {{api}}/alignment/
-Content-Type: application/json
-
-{
-    "data": ">sp|P40337|VHL_HUMAN von Hippel-Lindau disease tumor suppressor OS=Homo sapiens OX=9606 GN=VHL PE=1 SV=2\nMPRRAENWD"
-}
-
-
 ###
 POST {{api}}//delete_file/
 Content-Type: application/json
@@ -25,17 +7,6 @@ Content-Type: application/json
 {
     "data": "/static/alignments/71312449048538038272.align"
 }
-
-###
-POST {{api}}/alignment
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="file"; filename="file.fasta"
-Content-Type: text/plain
-
-< ./send_data/pvhl.fasta
-------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
 POST {{api}}/msa/
@@ -129,6 +100,18 @@ Content-Type: application/json
         "selected_property": "Group_0"
     }
 }
+
+###
+POST {{api}}/encoding/
+Content-Type: application/json
+
+{
+    "data": ">sp|P40337|VHL_HUMAN von Hippel-Lindau disease tumor suppressor OS=Homo sapiens OX=9606 GN=VHL PE=1 SV=2\nMPRRAENWDEAEVGAEEAGVEEYGPEEDMPRRAENWDEAEVGAEEAGVEEYGPEED\n",
+    "options": {
+        "encoding": "embedding",
+        "embedding": "word2vec"
+    }
+}
 ###
 POST {{api}}/alignment_clustering/
 Content-Type: application/json
@@ -166,23 +149,6 @@ Content-Type: application/json
     }
 }
 
-##### SEARCH """"""
-POST {{api}}/search/
-Content-Type: application/json
-
-{
-    "query": "( 0.1 <= Hydrophobic Ratio <= 0.3 )",
-    "limit": 50,
-    "page": 1
-}
-###
-POST {{api}}/count/
-Content-Type: application/json
-
-{
-    "query": "((Taxonomy = 3) AND ( Activity = 1 ))"
-    
-}
 ###SUPERVISED LEARNING###
 POST {{api}}/supervised_learning/
 Content-Type: application/json
@@ -230,107 +196,6 @@ Content-Type: application/json
 }
 
 
-###PARAMETERS####
-
-GET {{api}}/min_max_parameters/
-
-###
-
-GET {{api}}/database_list/
-
-###
-GET {{api}}/activity_list/
-
-###
-GET {{api}}/gene_ontology_list/c
-###
-
-GET {{api}}/gene_ontology_list
-
-###
-GET {{api}}/pfam_list/a
-
-###
-GET {{api}}/taxonomy_list/po
-###
-
-GET {{api}}/taxonomy_list
-
-### MODELS ###
-POST {{api}}/publish_model/
-Content-Type: application/json
-
-{
-    "options":{
-        "job_path": "./files/97833326399126192128.joblib",
-        "username": "Gabriel",
-        "mail": "gcabas17@alumnos.utalca.cl",
-        "title": "dsafjdajfs",
-        "description": "SDJFDJKFSJAKKAS",
-        "encoding": "digital_signal_processing",
-        "selected_property": "alpha-structure_group",
-        "task": "classification",
-        "algorithm": "adaboost",
-        "validation": 4
-    },
-    "model_results": {
-        "performance": {
-            "accuracy": 0.846, 
-            "recall": 0.909, 
-            "precision": 0.796,
-            "f1": 0.848
-        }, 
-        "confusion_matrix": {
-            "x": ["0", "1"], 
-            "y": ["0", "1"], 
-            "z": [[209, 0], [0, 187]]
-        }, 
-        "analysis": {
-            "sensibility": [1.0, 1.0], 
-            "sensitivity": [1.0, 1.0], 
-            "categories": ["0", "1"]
-        }, 
-        "learning_curve": {
-            "training": {
-                "x": [29, 96, 163, 230, 297], 
-                "y": [1.0, 1.0, 1.0, 1.0, 1.0]
-            }, 
-            "error_training": {
-                "x": [29, 96, 163, 230, 297, 297, 230, 163, 96, 29], 
-                "y": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-            }, 
-            "testing": {
-                "x": [29, 96, 163, 230, 297], 
-                "y": [0.823, 0.831, 0.833, 0.836, 0.843]
-            }, 
-            "error_testing": {
-                "x": [29, 96, 163, 230, 297, 297, 230, 163, 96, 29], 
-                "y": [0.874, 0.842, 0.859, 0.857, 0.876, 0.811, 0.815, 0.808, 0.82, 0.772]
-            }
-        }, 
-        "performance_testing": {
-            "accuracy": 0.879, 
-            "recall": 0.941, 
-            "precision": 0.852, 
-            "f1": 0.888
-        }, 
-        "confusion_matrix_testing": {
-            "x": ["0", "1"], 
-            "y": ["0", "1"],
-            "z": [[40, 9], [3, 47]]
-        }, 
-        "analysis_testing": {
-            "sensibility": [0.8163265306122449, 0.94], 
-            "sensitivity": [0.9302325581395349, 0.8392857142857143], 
-            "categories": ["0", "1"]
-        }
-    }
-}
-
-###
-GET {{api}}/list_models/
-
-
 ###
 POST {{api}}/use_model/
 Content-Type: application/json
@@ -343,31 +208,6 @@ Content-Type: application/json
         "selected_property": "alpha-structure_group"
     }
 }
-
-### PEPTIDE ###
-GET {{api}}/get_go_from_peptide/1
-
-###
-GET {{api}}/get_pfam_from_peptide/512128
-
-###
-GET {{api}}/get_tax_from_peptide/1
-
-###
-GET {{api}}/get_info_from_peptide/1
-
-###
-GET {{api}}/get_act_from_peptide/1
-
-###
-GET {{api}}/get_patent_from_peptide/2189576
-
-###
-GET {{api}}/get_db_from_peptide/1
-
-###
-GET {{api}}/get_structure/28
-
 ###
 
 POST {{api}}/fasta_convertor/
@@ -376,53 +216,6 @@ Content-Type: application/json
 {
     "data": "fdsafdsa\nfdsafdsfdsfdsafdsafs\nrewrqwdjskadjksadjksakdsajkfsjafkdsajkfdsjfkdsafjdsafhdsgehaikfds\njfuwihrqwiruewjfdsfhasiufwjkdasfhudsiafdjsafewqnreuhfadojkfdsafhudsfidksnfudsahfdsaiofndskafdusaifojnfdasufiadsofjunadsfasrewqrwerr"
 }
-
-###
-
-GET {{api}}/get_db_statistics/
-###
-
-GET {{api}}/get_all_act_statistics/
-###
-
-GET {{api}}/get_general_act_statistic/
-
-###
-GET {{api}}/get_specific_act_statistics/6
-###
-
-GET {{api}}/get_tree/
-
-###
-GET {{api}}/get_general_counts/
-
-###
-GET {{api}}/get_peptides_by_database/
-
-###
-GET {{api}}/get_peptides_by_activity/
-
-###
-GET {{api}}/get_chord_diagram/level/2
-
-###
-GET {{api}}/get_parents_levels/
-
-###
-GET {{api}}/get_activity_spectral/1
-
-###
-GET {{api}}/get_activity_details/118
-
-###
-GET {{api}}/get_spectral_by_encoding/9
-
-###
-
-GET {{api}}/sample_sequences/10000
-
-###
-GET {{api}}/get_activity_sequences/118
 
 ###
 
@@ -439,7 +232,3 @@ Content-Type: application/json
 ###
 
 GET {{api}}/activity_models_list/
-
-###
-
-GET {{api}}/get_structural_analysis/2194873

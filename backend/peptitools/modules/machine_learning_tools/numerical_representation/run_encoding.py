@@ -16,7 +16,7 @@ class Encoding(ConfigTool):
     def __init__(self, data, options, is_file, config):
         super().__init__("encoding", data, config, is_file)
         self.options = options
-        self.df = fasta2df(data)
+        self.data = fasta2df(data)
         self.encoder_dataset = config["folders"]["encoders_dataset"]
         random_number = str(round(random() * 10**20))
         self.output_path = f"results/{random_number}.csv"
@@ -24,16 +24,16 @@ class Encoding(ConfigTool):
     def process_encoding(self):
         """Encoding process"""
         if self.options["encoding"] == "one_hot_encoding":
-            one_hot_encoding = OneHotEncoding(self.df, "id", "sequence")
+            one_hot_encoding = OneHotEncoding(self.data, "id", "sequence")
             res = one_hot_encoding.encode_dataset()
         if self.options["encoding"] in ["physicochemical_properties", "digital_signal_processing"]:
-            physicochemical = Physicochemical(self.df, self.options["selected_property"], self.encoder_dataset, "id", "sequence")
+            physicochemical = Physicochemical(self.data, self.options["selected_property"], self.encoder_dataset, "id", "sequence")
             res = physicochemical.encode_dataset()
         if self.options["encoding"] == "digital_signal_processing":
             fft = FftEncoding(res, "id")
             res = fft.encoding_dataset()
         if self.options["encoding"] == "embedding":
-            bio_embeddings = Bioembeddings(self.df, "id", "sequence")
+            bio_embeddings = Bioembeddings(self.data, "id", "sequence")
             if self.options["pretrained_model"] == "bepler":
                 res = bio_embeddings.apply_bepler()
             if self.options["pretrained_model"] == "fasttext":

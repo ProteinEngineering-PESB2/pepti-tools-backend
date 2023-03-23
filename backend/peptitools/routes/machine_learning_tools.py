@@ -9,7 +9,7 @@ from peptitools.modules.machine_learning_tools.clustering_methods.distance_clust
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
 from peptitools.modules.machine_learning_tools.transformer.pca_process import PCA
-#from peptitools.modules.supervised_learning import SupervisedLearning
+from peptitools.modules.machine_learning_tools.training_supervised_learning.supervised_learning import SupervisedLearning
 from peptitools.modules.utils import Interface
 
 ##Reads config file and asign folder names.
@@ -73,16 +73,14 @@ def api_pca():
     result, path = pca.apply_pca()
     return {"result": result, "path": path}
 
-'''
 @machine_learning_blueprint.route("/supervised_learning/", methods=["POST"])
 def api_supervised_learning():
     """It performs a Supervised learning from a csv file"""
     data, options, is_file = Interface(request).parse_with_options()
-    sl_obj = SupervisedLearning(data, options, is_file, config, db)
+    sl_obj = SupervisedLearning(data, options, is_file, config)
     check = sl_obj.check
     if check["status"] == "error":
         return check
     result = sl_obj.run()
     job_path = sl_obj.job_path
     return {"result": result, "job_path": job_path}
-'''

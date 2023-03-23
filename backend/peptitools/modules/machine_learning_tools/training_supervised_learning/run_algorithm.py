@@ -14,7 +14,7 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.svm import SVC, SVR, NuSVC, NuSVR
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
-from peptitools.modules.training_supervised_learning import supervised_algorithm
+from peptitools.modules.machine_learning_tools.training_supervised_learning.supervised_algorithm import ModelAlgorithm
 
 
 class RunAlgorithm:
@@ -96,7 +96,7 @@ class RunAlgorithm:
         elif self.task == "regression":
             self.__instance_regression_model()
         # instance training object
-        self.training_object = supervised_algorithm.ModelAlgorithm(
+        self.training_object = ModelAlgorithm(
             self.dataset,
             self.response,
             self.task,

@@ -12,8 +12,8 @@ from sklearn.preprocessing import (
 )
 
 
-from peptitools.modules.machine_learning_tools.clustering_methods.transformation_data import Transformer
-from peptitools.modules.machine_learning_tools.numerical_representation.encoding import Encoding
+from peptitools.modules.machine_learning_tools.transformer.transformation_data import Transformer
+from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 from peptitools.modules.machine_learning_tools.training_supervised_learning.run_algorithm import RunAlgorithm
 from peptitools.modules.utils import ConfigTool
 
@@ -22,14 +22,12 @@ class SupervisedLearning(Encoding):
     """Supervised Learning class"""
 
     def __init__(self, data, options, is_file, config):
-        super().__init__("supervised_learning", data, config, is_file, is_fasta=False)
-        static_folder = config["folders"]["static_folder"]
+        super().__init__(data, options, is_file, config)
         rand_number = str(round(random() * 10**20))
-        self.dataset_encoded_path = f"{static_folder}/{rand_number}.csv"
+        self.dataset_encoded_path = f"{self.static_folder}/{rand_number}.csv"
         self.job_path = self.dataset_encoded_path.replace(".csv", ".joblib")
         self.options = options
         self.dataset_encoded = None
-        self.df_encoder = db.get_encoder()
         self.task = self.options["task"]
         self.algorithm = self.options["algorithm"]
         self.validation = self.options["validation"]
@@ -37,6 +35,8 @@ class SupervisedLearning(Encoding):
         self.kernel = self.options["kernel"]
         self.preprocessing = self.options["preprocessing"]
         self.transformer = Transformer()
+        self.data = data
+        self.create_file()
         self.data = pd.read_csv(self.temp_file_path)
         self.target = self.data.target
         self.data.drop("target", inplace=True, axis=1)
@@ -44,7 +44,7 @@ class SupervisedLearning(Encoding):
 
     def run(self):
         """Runs encoding, preprocessing and build ML model"""
-        self.process_encoding_stage()
+        self.process_encoding()
         ids = self.dataset_encoded.id.values
         self.dataset_encoded.drop(["id"], axis=1, inplace=True)
 
@@ -53,6 +53,9 @@ class SupervisedLearning(Encoding):
 
         if self.kernel != "":
             self.pca()
+        self.dataset_encoded = pd.DataFrame(self.dataset_encoded, columns=[
+            f"p_{a}" for a in range(len(self.dataset_encoded[0]))
+        ])
         self.dataset_encoded["id"] = ids
         self.dataset_encoded.to_csv(self.dataset_encoded_path, index=False)
         self.dataset_encoded.drop(["id"], axis=1, inplace=True)
@@ -130,7 +133,6 @@ class SupervisedLearning(Encoding):
         pca_result = self.transformer.apply_kernel_pca(
             self.dataset_encoded, self.kernel
         )
-        self.dataset_encoded = pd.DataFrame(data=pca_result, columns=["P_0", "P_1"])
 
     def preprocess(self):
         """Apply preprocessing scaler"""

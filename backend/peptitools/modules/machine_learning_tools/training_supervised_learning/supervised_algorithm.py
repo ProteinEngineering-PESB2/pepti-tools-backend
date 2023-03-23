@@ -1,7 +1,6 @@
 """Supervised algorithms"""
 from sklearn.model_selection import train_test_split
-
-from peptitools.modules.training_supervised_learning import response_training
+from peptitools.modules.machine_learning_tools.training_supervised_learning.response_training import ResponseTrainingModel
 
 
 class ModelAlgorithm:
@@ -19,16 +18,16 @@ class ModelAlgorithm:
             self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(
                 self.dataset, self.target, test_size=self.test_size
             )
-            self.training_performances = response_training.ResponseTrainingModel(
+            self.training_performances = ResponseTrainingModel(
                 self.x_train, self.y_train, self.model, self.validation
             )
-            self.testing_performances = response_training.ResponseTrainingModel(
+            self.testing_performances = ResponseTrainingModel(
                 self.x_test, self.y_test, self.model, self.validation
             )
         if self.test_size == 0:
             self.x_train = self.dataset
             self.y_train = self.target
-            self.training_performances = response_training.ResponseTrainingModel(
+            self.training_performances = ResponseTrainingModel(
                 self.x_train, self.y_train, self.model, self.validation
             )
 

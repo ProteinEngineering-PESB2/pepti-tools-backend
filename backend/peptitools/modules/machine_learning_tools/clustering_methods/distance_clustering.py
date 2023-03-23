@@ -14,9 +14,8 @@ class DistanceClustering(GraphClustering):
     """Distance Clustering class"""
     def __init__(self, data, options, is_file, config):
         super().__init__(data, options, is_file, config)
-        static_folder = config["folders"]["static_folder"]
         rand_number = str(round(random() * 10**20))
-        self.dataset_encoded_path = f"{static_folder}/{rand_number}.csv"
+        self.dataset_encoded_path = f"{self.static_folder}/{rand_number}.csv"
         self.options = options
         self.dataset_encoded = None
         # self.path_config_aaindex_encoder = config["folders"]["path_aa_index"]

@@ -73,6 +73,7 @@ class ConfigTool:
     def save_csv_on_static(self, csv, path):
         csv.to_csv(f"{self.static_folder}/{path}", index=False)
 
+
 class CsvFile:
     def __init__(self, path, config_module):
         self.path = path
@@ -97,9 +98,10 @@ class CsvFile:
             message = "Duplicated ids"
         if not self.less_than_n():
             message = "Too many sequences"
+        """
         if not self.more_than_n():
             message = "Too few sequences"
-        """
+        
         if len(invalid_protein_ids := self.invalid_proteins()) > 0:
             message = f"Not proteins:{new_line}{new_line.join(invalid_protein_ids)}"
         if len(invalid_length_ids := self.invalid_lengths()) > 0:
@@ -166,9 +168,9 @@ class FastaFile:
             message = "Duplicated ids"
         if not self.less_than_n():
             message = "Too many sequences"
+        """
         if not self.more_than_n():
             message = "Too few sequences"
-        """
         if len(invalid_protein_ids := self.invalid_proteins()) > 0:
             message = f"Not proteins:{new_line}{new_line.join(invalid_protein_ids)}"
         if len(invalid_length_ids := self.invalid_lengths()) > 0:

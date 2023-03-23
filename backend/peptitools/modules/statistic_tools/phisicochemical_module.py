@@ -13,7 +13,6 @@ class PhysicochemicalProperties(ConfigTool):
     """Physicochemical Class"""
 
     def __init__(self, data, options, is_file, config):
-        self.static_folder = config["folders"]["static_folder"]
         self.length = options["length"]
         self.molecular_weight = options["molecular_weight"]
         self.isoelectric_point = options["isoelectric_point"]

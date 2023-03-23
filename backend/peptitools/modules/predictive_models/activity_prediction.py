@@ -15,10 +15,9 @@ class ActivityPrediction(ConfigTool):
     def __init__(self, data, options, is_file, config, db):
         super().__init__("activity_prediction", data, config, is_file)
         self.options = options
-        static_folder = config["folders"]["static_folder"]
         self.models_folder = config["folders"]["activity_prediction_models"]
         rand_number = str(round(random() * 10**20))
-        self.dataset_encoded_path = f"{static_folder}/{rand_number}.csv"
+        self.dataset_encoded_path = f"{self.static_folder}/{rand_number}.csv"
         self.options = options
         self.dataset_encoded = pd.DataFrame()
         self.cores = mp.cpu_count()

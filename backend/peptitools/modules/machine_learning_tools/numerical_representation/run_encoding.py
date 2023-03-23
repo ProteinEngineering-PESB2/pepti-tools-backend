@@ -34,15 +34,15 @@ class Encoding(ConfigTool):
             res = fft.encoding_dataset()
         if self.options["encoding"] == "embedding":
             bio_embeddings = Bioembeddings(self.df, "id", "sequence")
-            if self.options["embedding"] == "bepler":
+            if self.options["pretrained_model"] == "bepler":
                 res = bio_embeddings.apply_bepler()
-            if self.options["embedding"] == "fasttext":
+            if self.options["pretrained_model"] == "fasttext":
                 res = bio_embeddings.apply_fasttext()
-            if self.options["embedding"] == "glove":
+            if self.options["pretrained_model"] == "glove":
                 res = bio_embeddings.apply_glove()
-            if self.options["embedding"] == "plus_rnn":
+            if self.options["pretrained_model"] == "plus_rnn":
                 res = bio_embeddings.apply_plus_rnn()
-            if self.options["embedding"] == "word2vec":
+            if self.options["pretrained_model"] == "word2vec":
                 res = bio_embeddings.apply_word2vec()
         self.dataset_encoded = res
         self.save_csv_on_static(res, self.output_path)

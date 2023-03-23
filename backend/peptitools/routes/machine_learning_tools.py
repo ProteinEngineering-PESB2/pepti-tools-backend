@@ -8,8 +8,7 @@ from peptitools.modules.machine_learning_tools.clustering_methods.clustering_pro
 from peptitools.modules.machine_learning_tools.clustering_methods.distance_clustering import DistanceClustering
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
-#from peptitools.modules.alignment_clustering import alignment_clustering
-from peptitools.modules.machine_learning_tools.pca_process import PCA
+from peptitools.modules.machine_learning_tools.transformer.pca_process import PCA
 #from peptitools.modules.supervised_learning import SupervisedLearning
 from peptitools.modules.utils import Interface
 

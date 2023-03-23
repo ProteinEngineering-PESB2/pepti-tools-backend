@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import os
 import re
@@ -12,6 +13,7 @@ class SampleSequences:
         with open(self.sample_path, "r", encoding="utf-8") as file:
             text = file.read()
         data = fasta2df(text)
-        data = data.sample(self.limit)
+        data_index = np.random.choice(data.index.values, self.limit, replace=False)
+        data = data.iloc[data_index]
         return  {"data": df2fasta(data)}
         

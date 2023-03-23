@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.colors import to_hex
 
-from peptitools.modules.machine_learning_tools.clustering_methods.transformation_data import Transformer
+from peptitools.modules.machine_learning_tools.transformer.transformation_data import Transformer
 
 
 class PCA:
@@ -30,10 +30,10 @@ class PCA:
     def apply_pca(self):
         """Apply PCA or kernel PCA"""
         if self.kernel is None:
-            pca_result = self.transformer.apply_pca_data(self.dataset_to_transform)
+            pca_result = self.transformer.apply_pca_data(self.dataset_to_transform, 2)
         else:
             pca_result = self.transformer.apply_kernel_pca(
-                self.dataset_to_transform, self.kernel
+                self.dataset_to_transform, self.kernel, 2
             )
         self.pca = pd.DataFrame(data=pca_result, columns=["X", "Y"])
         self.pca["id"] = self.data["id"]

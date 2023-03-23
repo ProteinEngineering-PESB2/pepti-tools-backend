@@ -3,7 +3,7 @@ FROM continuumio/miniconda3
 #Instalación de programas y librerías necesarias
 RUN apt-get update && \
     apt-get -y install --no-install-recommends\
-    metastudent \
+    #metastudent \
     wget gzip make gcc g++ python-dev\
     git && rm -rf /var/lib/apt/lists/*
 
@@ -30,13 +30,13 @@ COPY input_encoders ../input_encoders
 WORKDIR /files/pfam_db
 
 #PFAM database
-RUN wget https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz
-RUN wget https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.dat.gz
-RUN wget https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/active_site.dat.gz
-RUN gzip -d Pfam-A.hmm.gz
-RUN gzip -d Pfam-A.hmm.dat.gz
-RUN gzip -d active_site.dat.gz
-RUN hmmpress Pfam-A.hmm
+#RUN wget https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz
+#RUN wget https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.dat.gz
+#RUN wget https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/active_site.dat.gz
+#RUN gzip -d Pfam-A.hmm.gz
+#RUN gzip -d Pfam-A.hmm.dat.gz
+#RUN gzip -d active_site.dat.gz
+#RUN hmmpress Pfam-A.hmm
 
 WORKDIR /app
 ENV PYTHONPATH=.

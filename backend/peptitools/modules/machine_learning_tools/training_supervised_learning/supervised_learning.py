@@ -11,12 +11,9 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 
-from peptitools.modules.machine_learning_tools.numerical_representation.one_hot_encoding import OneHotEncoding
-from peptitools.modules.machine_learning_tools.numerical_representation.physicochemical_properties import Physicochemical
-from peptitools.modules.machine_learning_tools.numerical_representation.fft_encoding import FftEncoding
 
 from peptitools.modules.machine_learning_tools.clustering_methods.transformation_data import Transformer
-from peptitools.modules.machine_learning_tools.encoding import Encoding
+from peptitools.modules.machine_learning_tools.numerical_representation.encoding import Encoding
 from peptitools.modules.machine_learning_tools.training_supervised_learning.run_algorithm import RunAlgorithm
 from peptitools.modules.utils import ConfigTool
 

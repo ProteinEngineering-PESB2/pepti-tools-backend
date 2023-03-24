@@ -1,6 +1,12 @@
 """Transforms data module"""
 from sklearn.decomposition import PCA, KernelPCA
-
+from sklearn.preprocessing import (
+    MaxAbsScaler,
+    MinMaxScaler,
+    QuantileTransformer,
+    RobustScaler,
+    StandardScaler,
+)
 
 class Transformer:
     """Transformer class"""
@@ -20,3 +26,17 @@ class Transformer:
         else:
             pca_transformer = KernelPCA(kernel=kernel, n_components=n_components)
         return pca_transformer.fit_transform(dataset)
+
+    def apply_scaler(self, dataset, scaler):
+        if scaler == "min_max":
+            scaler = MinMaxScaler()
+        elif scaler == "standard":
+            scaler = StandardScaler()
+        elif scaler == "max_absolute":
+            scaler = MaxAbsScaler()
+        elif scaler == "robust":
+            scaler = RobustScaler()
+        elif scaler == "quantile":
+            scaler = QuantileTransformer()
+        scaler.fit(dataset)
+        return scaler.transform(dataset)

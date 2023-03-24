@@ -29,6 +29,7 @@ def apply_encoding():
     if check["status"] == "error":
         return check
     result = code.process_encoding()
+    print(result)
     return {"result": result}
 
 @machine_learning_blueprint.route("/clustering/", methods=["POST"])
@@ -40,6 +41,7 @@ def api_clustering():
     if check["status"] == "error":
         return check
     result = clustering_object.process_clustering()
+    print(result)
     return {"result": result}
 
 
@@ -77,7 +79,7 @@ def api_pca():
 def api_supervised_learning():
     """It performs a Supervised learning from a csv file"""
     data, options, is_file = Interface(request).parse_with_options()
-    sl_obj = SupervisedLearning(data, options, is_file, config)
+    sl_obj = SupervisedLearning(data, options, is_file, config, is_fasta=False)
     check = sl_obj.check
     if check["status"] == "error":
         return check

@@ -2,7 +2,7 @@ version: "3.8"
 services:
   backend:
     image: peptitools-backend-dev
-    container_name: peptitools-backend-dev
+    container_name: peptitools-backend-dev2
     build:
       context: ./backend/
       dockerfile: Dockerfile.dev

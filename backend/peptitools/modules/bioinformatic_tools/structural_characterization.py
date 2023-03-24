@@ -11,8 +11,7 @@ class StructuralCharacterization(ConfigTool):
 
     def __init__(self, data, options, is_file, config):
         super().__init__("structural", data, config, is_file)
-        rand_number = str(round(random() * 10**20))
-        self.output_path = f"{self.temp_folder}/{rand_number}"
+        self.output_path = f"{self.temp_folder}/{round(random() * 10**20)}"
         self.options = options
         self.predictions = ["ss3", "ss8", "acc", "diso", "tm2", "tm8"]
 

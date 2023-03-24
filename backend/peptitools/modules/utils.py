@@ -13,7 +13,6 @@ AMINOACID_ALPHABET = "ARNDCEQGHILKMFPSTWYVX*"
 
 class ConfigTool:
     """Config tool class"""
-
     def __init__(self, config_module_name, data, config, is_file, is_fasta=True):
         self.data = data
         self.config = config
@@ -21,14 +20,17 @@ class ConfigTool:
         self.temp_folder = config["folders"]["temp_folder"]
         self.temp_file_path = f"{self.temp_folder}/{str(round(random() * 10**20))}"
         self.temp_csv_file = None
+
         if is_fasta:
             self.temp_file_path += ".fasta"
         else:
             self.temp_file_path += ".csv"
+
         if not is_file:
             self.create_file()
-        elif is_file:
+        else:
             self.save_file()
+
         if is_fasta:
             self.check = FastaFile(
                 self.temp_file_path, config[config_module_name]
@@ -56,9 +58,7 @@ class ConfigTool:
 
     def create_csv_from_fasta(self):
         """Transform fasta format to csv file"""
-        self.temp_csv_file = (
-            self.temp_folder + "/" + str(round(random() * 10**20)) + ".fasta"
-        )
+        self.temp_csv_file = f"{self.temp_folder}/{round(random() * 10**20)}.fasta"
         with open(self.temp_file_path, "r", encoding="utf-8") as file:
             data = file.read()
         with open(self.temp_csv_file, "w", encoding="utf-8") as file:
@@ -98,10 +98,10 @@ class CsvFile:
             message = "Duplicated ids"
         if not self.less_than_n():
             message = "Too many sequences"
-        """
         if not self.more_than_n():
             message = "Too few sequences"
         
+        """
         if len(invalid_protein_ids := self.invalid_proteins()) > 0:
             message = f"Not proteins:{new_line}{new_line.join(invalid_protein_ids)}"
         if len(invalid_length_ids := self.invalid_lengths()) > 0:
@@ -127,7 +127,6 @@ class CsvFile:
         return self.data.shape[0] >= self.min_number_sequences
 
     def invalid_proteins(self):
-        print(self.data)
         invalid_ids = []
         aa_regex = re.compile(f"[{AMINOACID_ALPHABET}]+")
         for row in self.data.itertuples():

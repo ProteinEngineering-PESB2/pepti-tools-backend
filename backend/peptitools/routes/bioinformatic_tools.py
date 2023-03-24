@@ -26,6 +26,7 @@ def apply_msa():
     if check["status"] == "error":
         return check
     result = msa.run_process()
+    print(result)
     return {"result": result}
 
 

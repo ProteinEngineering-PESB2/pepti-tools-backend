@@ -3,13 +3,7 @@ from random import random
 
 import pandas as pd
 from joblib import dump
-from sklearn.preprocessing import (
-    MaxAbsScaler,
-    MinMaxScaler,
-    QuantileTransformer,
-    RobustScaler,
-    StandardScaler,
-)
+
 
 
 from peptitools.modules.machine_learning_tools.transformer.transformation_data import Transformer
@@ -21,13 +15,9 @@ from peptitools.modules.utils import ConfigTool
 class SupervisedLearning(Encoding):
     """Supervised Learning class"""
 
-    def __init__(self, data, options, is_file, config):
-        super().__init__(data, options, is_file, config)
-        rand_number = str(round(random() * 10**20))
-        self.dataset_encoded_path = f"{self.static_folder}/{rand_number}.csv"
-        self.job_path = self.dataset_encoded_path.replace(".csv", ".joblib")
+    def __init__(self, data, options, is_file, config, is_fasta):
+        super().__init__(data, options, is_file, config, is_fasta)
         self.options = options
-        self.dataset_encoded = None
         self.task = self.options["task"]
         self.algorithm = self.options["algorithm"]
         self.validation = self.options["validation"]
@@ -35,29 +25,15 @@ class SupervisedLearning(Encoding):
         self.kernel = self.options["kernel"]
         self.preprocessing = self.options["preprocessing"]
         self.transformer = Transformer()
-        self.data = data
-        self.create_file()
-        self.data = pd.read_csv(self.temp_file_path)
+
         self.target = self.data.target
         self.data.drop("target", inplace=True, axis=1)
+        
         self.model = None
 
     def run(self):
         """Runs encoding, preprocessing and build ML model"""
         self.process_encoding()
-        ids = self.dataset_encoded.id.values
-        self.dataset_encoded.drop(["id"], axis=1, inplace=True)
-
-        if self.preprocessing != "":
-            self.preprocess()
-
-        if self.kernel != "":
-            self.pca()
-        self.dataset_encoded = pd.DataFrame(self.dataset_encoded, columns=[
-            f"p_{a}" for a in range(len(self.dataset_encoded[0]))
-        ])
-        self.dataset_encoded["id"] = ids
-        self.dataset_encoded.to_csv(self.dataset_encoded_path, index=False)
         self.dataset_encoded.drop(["id"], axis=1, inplace=True)
         run_instance = RunAlgorithm(
             self.dataset_encoded,
@@ -101,50 +77,11 @@ class SupervisedLearning(Encoding):
                 del response_testing["analysis"]
 
             response_training.update(response_testing)
-        response_training.update({"encoding_path": self.dataset_encoded_path})
         self.model = run_instance.get_model()
+        self.job_path = self.output_df_encoded.replace(".csv", ".joblib")
         self.dump_joblib()
-        self.dataset_encoded["id"] = ids
-        self.dataset_encoded["sequence"] = self.data.sequence
-        self.dataset_encoded["label"] = self.target
-        self.dataset_encoded.to_csv(self.dataset_encoded_path, index=False)
         return response_training
-
-    def process_encoding_stage(self):
-        """Encoding process"""
-        if self.options["encoding"] == "one_hot_encoding":
-            one_hot_encoding = OneHotEncoding(self.df, "id", "sequence")
-            res = one_hot_encoding.encode_dataset()
-        if self.options["encoding"] in ["physicochemical_properties", "digital_signal_processing"]:
-            physicochemical = Physicochemical(self.df, self.options["property"], self.encoder_dataset, "id", "sequence")
-            res = physicochemical.encode_dataset()
-        if self.options["encoding"] == "digital_signal_processing":
-            fft = FftEncoding(res, "id")
-            res = fft.encoding_dataset()
-        self.save_csv_on_static(res, self.output_path)
-        return {"path": self.output_path}
 
     def dump_joblib(self):
         """Save model"""
         dump(self.model, self.job_path)
-
-    def pca(self):
-        """Apply pca"""
-        pca_result = self.transformer.apply_kernel_pca(
-            self.dataset_encoded, self.kernel
-        )
-
-    def preprocess(self):
-        """Apply preprocessing scaler"""
-        if self.preprocessing == "min_max":
-            scaler = MinMaxScaler()
-        elif self.preprocessing == "standard":
-            scaler = StandardScaler()
-        elif self.preprocessing == "max_absolute":
-            scaler = MaxAbsScaler()
-        elif self.preprocessing == "robust":
-            scaler = RobustScaler()
-        elif self.preprocessing == "quantile":
-            scaler = QuantileTransformer()
-        scaler.fit(self.dataset_encoded)
-        self.dataset_encoded = scaler.transform(self.dataset_encoded)

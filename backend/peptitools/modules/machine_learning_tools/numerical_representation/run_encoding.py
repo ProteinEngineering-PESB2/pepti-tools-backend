@@ -7,6 +7,7 @@ from peptitools.modules.machine_learning_tools.numerical_representation.one_hot_
 from peptitools.modules.machine_learning_tools.numerical_representation.physicochemical_properties import Physicochemical
 from peptitools.modules.machine_learning_tools.numerical_representation.fft_encoding import FftEncoding
 from peptitools.modules.machine_learning_tools.numerical_representation.protein_language_model import Bioembeddings
+from peptitools.modules.machine_learning_tools.numerical_representation.descriptors import Descriptor
 from peptitools.modules.machine_learning_tools.transformer.transformation_data import Transformer
 from peptitools.modules.utils import ConfigTool
 import pandas as pd
@@ -49,9 +50,16 @@ class Encoding(ConfigTool):
                 self.dataset_encoded = bio_embeddings.apply_plus_rnn()
             if self.options["pretrained_model"] == "word2vec":
                 self.dataset_encoded = bio_embeddings.apply_word2vec()
+        if self.options["encoding"] == "global_descriptor":
+            descriptor = Descriptor(self.data, "id", "sequence")
+            self.dataset_encoded = descriptor.encode_dataset()
         if "kernel" in self.options.keys() or "preprocessing" in self.options.keys():
             self.dataset_encoded = self.dataset_encoded.drop(columns=["id"])
             self.transform_data()
+        
+        header = ["id"] + self.dataset_encoded.columns[:-1].tolist()
+        self.dataset_encoded = self.dataset_encoded[header]
+
         self.save_csv_on_static(self.dataset_encoded , self.output_path)
         self.output_df_encoded = f"{self.static_folder}/{self.output_path}"
         return {"path": self.output_df_encoded}

@@ -7,10 +7,16 @@ from sklearn.preprocessing import (
     RobustScaler,
     StandardScaler,
 )
+from sklearn.manifold import TSNE
 
 class Transformer:
     """Transformer class"""
 
+    def apply_tsne_data(self, dataset, n_components = 2):
+        """Apply tsne"""
+        pca_transformer = TSNE(n_components=n_components)
+        return pca_transformer.fit_transform(dataset)
+    
     def apply_pca_data(self, dataset, n_components = None):
         """Apply PCA"""
         if n_components == None:

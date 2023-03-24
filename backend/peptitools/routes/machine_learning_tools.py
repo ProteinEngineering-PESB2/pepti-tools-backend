@@ -8,7 +8,7 @@ from peptitools.modules.machine_learning_tools.clustering_methods.clustering_pro
 from peptitools.modules.machine_learning_tools.clustering_methods.distance_clustering import DistanceClustering
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
-from peptitools.modules.machine_learning_tools.transformer.pca_process import PCA
+from peptitools.modules.machine_learning_tools.transformer.tsne_process import TSNE
 from peptitools.modules.machine_learning_tools.training_supervised_learning.supervised_learning import SupervisedLearning
 from peptitools.modules.utils import Interface
 
@@ -41,7 +41,6 @@ def api_clustering():
     if check["status"] == "error":
         return check
     result = clustering_object.process_clustering()
-    print(result)
     return {"result": result}
 
 
@@ -71,8 +70,8 @@ def api_distance_clustering():
 @machine_learning_blueprint.route("/pca/", methods=["POST"])
 def api_pca():
     """It performs a PCA from a stored dataframe"""
-    pca = PCA(request.json["params"], config["folders"]["static_folder"])
-    result, path = pca.apply_pca()
+    pca = TSNE(request.json["params"], config["folders"]["static_folder"])
+    result, path = pca.apply_tsne()
     return {"result": result, "path": path}
 
 @machine_learning_blueprint.route("/supervised_learning/", methods=["POST"])

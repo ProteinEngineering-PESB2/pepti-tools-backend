@@ -15,5 +15,6 @@ class SampleSequences:
         data = fasta2df(text)
         data_index = np.random.choice(data.index.values, self.limit, replace=False)
         data = data.iloc[data_index]
+        data = data.drop_duplicates()
         return  {"data": df2fasta(data)}
         

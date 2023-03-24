@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 import multiprocessing as mp
 
 class FftEncoding:
-    def __init__(self, dataset, name_column_id, n_cores = None):
+    def __init__(self, dataset, name_column_id, n_cores = None, vector_size = None):
         self.dataset = dataset
         self.size_data = self.dataset.shape[1] - 1
         self.name_column_id = name_column_id
@@ -14,12 +14,15 @@ class FftEncoding:
         self.n_cores = mp.cpu_count()
         if n_cores is not None:
             self.n_cores = n_cores
+        if vector_size is None:
+            self.vector_size = int(pow(2, ceil(log2(self.size_data))))
+        else:
+            self.vector_size = vector_size
         self.__init_process()
 
     def __init_process(self):
         self.column_id = self.dataset[self.name_column_id]
         self.dataset = self.dataset.drop(columns=[self.name_column_id])
-        self.vector_size = int(pow(2, ceil(log2(self.size_data))))
         for i in range(self.size_data, self.vector_size):
             column_name = f"p_{i}"
             new_df = pd.DataFrame(columns=[column_name])

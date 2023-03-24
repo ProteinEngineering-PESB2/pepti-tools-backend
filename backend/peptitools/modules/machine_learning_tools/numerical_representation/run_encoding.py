@@ -7,6 +7,7 @@ from peptitools.modules.machine_learning_tools.numerical_representation.one_hot_
 from peptitools.modules.machine_learning_tools.numerical_representation.physicochemical_properties import Physicochemical
 from peptitools.modules.machine_learning_tools.numerical_representation.fft_encoding import FftEncoding
 from peptitools.modules.machine_learning_tools.numerical_representation.protein_language_model import Bioembeddings
+from peptitools.modules.machine_learning_tools.transformer.transformation_data import Transformer
 from peptitools.modules.utils import ConfigTool
 import pandas as pd
 
@@ -22,6 +23,7 @@ class Encoding(ConfigTool):
         self.encoder_dataset = config["folders"]["encoders_dataset"]
         self.output_path = f"results/{round(random() * 10**20)}.csv"
         self.ids = self.data.id
+        self.transformer = Transformer()
 
 
     def process_encoding(self):
@@ -56,7 +58,7 @@ class Encoding(ConfigTool):
 
     def transform_data(self):
         if self.options["kernel"] != "":
-            self.dataset_encoded = self.transformer.apply_kernel_pca(self.dataset_encoded, self.kernel)
+            self.dataset_encoded = self.transformer.apply_kernel_pca(self.dataset_encoded, self.options["kernel"])
         if self.options["preprocessing"] != "":
             self.dataset_encoded = self.transformer.apply_scaler(self.dataset_encoded, self.options["preprocessing"])
         if self.options["kernel"] != "" or self.options["preprocessing"] != "":

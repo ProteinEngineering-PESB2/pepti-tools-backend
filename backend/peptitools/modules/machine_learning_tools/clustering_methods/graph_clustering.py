@@ -71,6 +71,7 @@ class GraphClustering(Encoding):
             row = [element, self.partition[element]]
             matrix_group.append(row)
         self.results = pd.DataFrame(matrix_group, columns=["id", "label"])
+        self.save_csv_on_static(self.results, self.output_path)
 
     def parse_response(self):
         """Create response json"""
@@ -78,6 +79,7 @@ class GraphClustering(Encoding):
         response = {}
         response.update({"status": "success"})
         response.update({"data": json.loads(self.results.to_json(orient="records"))})
+        response.update({"encoding_path": f"/files/{self.output_path}"})
         response.update({"performance": {"Modularity": self.modularity_value}})
         self.filter_data.rename(
             columns={"id_1": "source", "id_2": "target"}, inplace=True

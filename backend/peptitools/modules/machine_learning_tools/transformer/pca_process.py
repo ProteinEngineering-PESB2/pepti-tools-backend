@@ -40,7 +40,7 @@ class PCA:
         self.pca["label"] = self.data["label"]
         self.__generate_colors()
         self.__create_traces()
-        pca_path = self.static_folder + "/" + str(round(random() * 10**20)) + ".csv"
+        pca_path = f"{self.results_folder}/{str(round(random() * 10**20))}.csv"
         self.pca.to_csv(pca_path, index=False)
         return self.traces, pca_path
 

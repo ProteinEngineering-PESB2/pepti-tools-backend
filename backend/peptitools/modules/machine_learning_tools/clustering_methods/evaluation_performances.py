@@ -1,7 +1,5 @@
 """Evaluation performance clustering module"""
 from sklearn import metrics
-
-
 class EvaluationClustering:
     """Evaluation clustering class"""
 

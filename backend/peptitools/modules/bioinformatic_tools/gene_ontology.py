@@ -1,10 +1,7 @@
 """Gene ontology module"""
 import subprocess
-
 import pandas as pd
-
 from peptitools.modules.utils import ConfigTool
-
 
 class GeneOntology(ConfigTool):
     """Gene ontology class"""

@@ -1,13 +1,11 @@
 """Alignment clustering module"""
 import json
-
 import community as community_louvain
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import pandas as pd
 from matplotlib.colors import to_hex
-
 from peptitools.modules.utils import ConfigTool
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 

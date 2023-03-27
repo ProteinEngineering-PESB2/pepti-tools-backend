@@ -18,6 +18,7 @@ class ConfigTool:
         self.config = config
         self.static_folder = config["folders"]["static_folder"]
         self.temp_folder = config["folders"]["temp_folder"]
+        self.results_folder = config["folders"]["results_folder"]
         self.temp_file_path = f"{self.temp_folder}/{str(round(random() * 10**20))}"
         self.temp_csv_file = None
 
@@ -33,11 +34,11 @@ class ConfigTool:
 
         if is_fasta:
             self.check = FastaFile(
-                self.temp_file_path, config[config_module_name]
+                self.temp_file_path, config, config_module_name
             ).verify()
         else:
             self.check = CsvFile(
-                self.temp_file_path, config[config_module_name]
+                self.temp_file_path, config, config_module_name
             ).verify()
 
     def create_file(self):
@@ -71,15 +72,16 @@ class ConfigTool:
         return pd.DataFrame(parse_fasta(fasta))
 
     def save_csv_on_static(self, csv, path):
-        csv.to_csv(f"{self.static_folder}/{path}", index=False)
+        csv.to_csv(f"{self.results_folder}/{path}", index=False)
 
 
 class CsvFile:
-    def __init__(self, path, config_module):
+    def __init__(self, path, config, config_name):
         self.path = path
-        self.max_number_sequences = int(config_module["max_sequences"])
-        self.min_number_sequences = int(config_module["min_sequences"])
-        self.max_length = int(config_module["max_length"])
+        self.max_number_sequences = int(config[config_name]["max_sequences"])
+        self.min_number_sequences = int(config[config_name]["min_sequences"])
+        self.max_length = int(config["global"]["max_length"])
+        self.min_length = int(config["global"]["min_length"])
         try:
             self.data = pd.read_csv(self.path)
         except:
@@ -100,13 +102,12 @@ class CsvFile:
             message = "Too many sequences"
         if not self.more_than_n():
             message = "Too few sequences"
-        
-        """
-        if len(invalid_protein_ids := self.invalid_proteins()) > 0:
-            message = f"Not proteins:{new_line}{new_line.join(invalid_protein_ids)}"
-        if len(invalid_length_ids := self.invalid_lengths()) > 0:
-            message = f"Invalid Lengths:{new_line}{new_line.join(invalid_length_ids)}"
-        """
+        invalid_protein_ids = self.invalid_proteins()
+        if len(invalid_protein_ids) > 0:
+            message = f"There are some invalid sequences, just use aminoacids.{new_line}{new_line.join(invalid_protein_ids)}"
+        invalid_lengths = self.invalid_lengths()
+        if len(invalid_lengths) > 0:
+            message = f"There are some invalid sequences, use peptides with a length between {self.min_length} and {self.max_length}.{new_line}{new_line.join(invalid_lengths)}"
         if message != "":
             return _error_message(message)
         return {"status": "success"}
@@ -147,11 +148,12 @@ class CsvFile:
 
 
 class FastaFile:
-    def __init__(self, path, config_module):
+    def __init__(self, path, config, config_name):
         self.path = path
-        self.max_number_sequences = int(config_module["max_sequences"])
-        self.min_number_sequences = int(config_module["min_sequences"])
-        self.max_length = int(config_module["max_length"])
+        self.max_number_sequences = int(config[config_name]["max_sequences"])
+        self.min_number_sequences = int(config[config_name]["min_sequences"])
+        self.max_length = int(config["global"]["max_length"])
+        self.min_length = int(config["global"]["min_length"])
         try:
             self.fasta = list(SeqIO.parse(self.path, "fasta"))
             SeqIO.write(self.fasta, self.path, "fasta")
@@ -166,15 +168,15 @@ class FastaFile:
         if not self.unique_ids():
             message = "Duplicated ids"
         if not self.less_than_n():
-            message = "Too many sequences"
-        """
+            message = f"Too many sequences\nPlease, use {self.max_number_sequences} sequences or less"
         if not self.more_than_n():
-            message = "Too few sequences"
-        if len(invalid_protein_ids := self.invalid_proteins()) > 0:
-            message = f"Not proteins:{new_line}{new_line.join(invalid_protein_ids)}"
-        if len(invalid_length_ids := self.invalid_lengths()) > 0:
-            message = f"Invalid Lengths:{new_line}{new_line.join(invalid_length_ids)}"
-        """
+            message = f"Too few sequences\nPlease, use {self.min_number_sequences} sequences or more"
+        invalid_protein_ids = self.invalid_proteins()
+        if len(invalid_protein_ids) > 0:
+            message = f"There are some invalid sequences, just use aminoacids.{new_line}{new_line.join(invalid_protein_ids)}"
+        invalid_lengths = self.invalid_lengths()
+        if len(invalid_lengths) > 0:
+            message = f"There are some invalid sequences.\nUse peptides with a length between {self.min_length} and {self.max_length} residues.{new_line}{new_line.join(invalid_lengths)}"
         if message != "":
             return _error_message(message)
         return {"status": "success"}
@@ -264,8 +266,6 @@ class Folders:
         for f in (
             "temp_folder",
             "static_folder",
-            "alignments_folder",
-            "downloads_folder",
             "results_folder",
         ):
             Path(self.config["folders"][f]).mkdir(parents=True, exist_ok=True)

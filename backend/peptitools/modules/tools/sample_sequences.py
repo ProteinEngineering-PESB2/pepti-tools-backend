@@ -1,8 +1,4 @@
 import numpy as np
-import pandas as pd
-import os
-import re
-import json
 from peptitools.modules.utils import fasta2df, df2fasta
 
 class SampleSequences:

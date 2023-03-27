@@ -2,11 +2,8 @@
 import os
 import re
 import subprocess
-
 import pandas as pd
-
 from peptitools.modules.utils import ConfigTool
-
 
 class Pfam(ConfigTool):
     """Pfam class"""

@@ -1,7 +1,6 @@
 """Fasta convertor module"""
 from random import random
 
-
 class FastaConvertor:
     """Fasta convertor class"""
 

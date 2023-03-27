@@ -26,7 +26,6 @@ RUN git clone https://github.com/realbigws/Predict_Property
 ENV PATH="/app/install_requisites/Predict_Property:${PATH}"
 WORKDIR /
 COPY files ../files
-COPY input_encoders ../input_encoders
 WORKDIR /files/pfam_db
 
 #PFAM database
@@ -42,5 +41,13 @@ WORKDIR /app
 ENV PYTHONPATH=.
 ENV PFAM_DB=/files/pfam_db
 
+# Auto remove trash files (1 day)
+WORKDIR /temp_files
+RUN find /temp_files -mtime +1 -delete
+WORKDIR /files/results
+RUN find /files/results/ -mtime +1 -delete
+
+
+WORKDIR /app
 #Ejecución de la api
 ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "peptitools", "python", "/app/peptitools/main.py"]

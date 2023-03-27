@@ -29,7 +29,6 @@ def apply_encoding():
     if check["status"] == "error":
         return check
     result = code.process_encoding()
-    print(result)
     return {"result": result}
 
 @machine_learning_blueprint.route("/clustering/", methods=["POST"])

@@ -1,11 +1,6 @@
 """Supervised learning module"""
-from random import random
-
 import pandas as pd
 from joblib import dump
-
-
-
 from peptitools.modules.machine_learning_tools.transformer.transformation_data import Transformer
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 from peptitools.modules.machine_learning_tools.training_supervised_learning.run_algorithm import RunAlgorithm
@@ -78,7 +73,7 @@ class SupervisedLearning(Encoding):
 
             response_training.update(response_testing)
         self.model = run_instance.get_model()
-        self.job_path = self.output_df_encoded.replace(".csv", ".joblib")
+        self.job_path = self.output_path.replace(".csv", ".joblib")
         self.dump_joblib()
         return response_training
 

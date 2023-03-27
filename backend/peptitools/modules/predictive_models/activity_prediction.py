@@ -20,7 +20,7 @@ class ActivityPrediction(ConfigTool):
         self.config = config
         self.encoder_dataset = pd.read_csv(config["folders"]["encoders_dataset"], index_col=0)
         self.models_folder = config["folders"]["activity_prediction_models"]
-        self.dataset_encoded_path = f"{self.static_folder}/{round(random() * 10**20)}.csv"
+        self.dataset_encoded_path = f"{self.results_folder}/{round(random() * 10**20)}.csv"
         self.options = options
         self.full_dataset_encoded = pd.DataFrame()
         self.cores = mp.cpu_count()

@@ -2,10 +2,7 @@
 import subprocess
 from os.path import basename
 from random import random
-
 from peptitools.modules.utils import ConfigTool
-
-
 class StructuralCharacterization(ConfigTool):
     """Structural Properties Class"""
 

@@ -3,7 +3,6 @@ import configparser
 
 from flask import Blueprint, request
 
-#from peptitools.modules.alignment_module import BlastAlignment
 from peptitools.modules.bioinformatic_tools.gene_ontology import GeneOntology
 from peptitools.modules.bioinformatic_tools.msa_module import MultipleSequenceAlignment
 from peptitools.modules.bioinformatic_tools.structural_characterization import StructuralCharacterization
@@ -26,7 +25,6 @@ def apply_msa():
     if check["status"] == "error":
         return check
     result = msa.run_process()
-    print(result)
     return {"result": result}
 
 
@@ -56,7 +54,7 @@ def apply_gene_ontology():
     result = go_obj.process()
     if len(result) == 0:
         return {
-            "status": "error",
+            "status": "warning",
             "description": "There's no significant results for this sequences",
         }
     return {"result": result}
@@ -73,7 +71,7 @@ def apply_pfam():
     result = pf_obj.process()
     if len(result) == 0:
         return {
-            "status": "error",
+            "status": "warning",
             "description": "There's no significant results for this sequences",
         }
     return {"result": result}

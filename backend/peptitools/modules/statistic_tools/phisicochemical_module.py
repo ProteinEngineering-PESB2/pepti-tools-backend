@@ -1,11 +1,9 @@
 """Physicochemical module"""
 import os
 from random import random
-
 from Bio import SeqIO
 from modlamp.descriptors import GlobalDescriptor
 from modlamp.plot import helical_wheel, plot_profile
-
 from peptitools.modules.utils import ConfigTool
 
 
@@ -61,7 +59,7 @@ class PhysicochemicalProperties(ConfigTool):
                 )
 
             profile_path = (
-                f"{self.static_folder}/{str(round(random() * 10**20))}_profile.png"
+                f"{self.results_folder}/{str(round(random() * 10**20))}_profile.png"
             )
             helical_path = profile_path.replace("profile", "helical")
             try:

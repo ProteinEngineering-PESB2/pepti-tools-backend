@@ -19,7 +19,7 @@ class Clustering(Encoding):
 
     def __init__(self, data, options, is_file, config):
         super().__init__(data, options, is_file, config)
-        self.dataset_encoded_path = f"{self.static_folder}/{round(random() * 10**20)}.csv"
+        self.dataset_encoded_path = f"{self.results_folder}/{round(random() * 10**20)}.csv"
         self.options = options
 
     def process_clustering(self):

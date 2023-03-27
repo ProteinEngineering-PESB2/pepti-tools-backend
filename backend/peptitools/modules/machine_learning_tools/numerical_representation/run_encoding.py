@@ -22,7 +22,7 @@ class Encoding(ConfigTool):
         else:
             self.data = pd.read_csv(self.temp_file_path)
         self.encoder_dataset = config["folders"]["encoders_dataset"]
-        self.output_path = f"results/{round(random() * 10**20)}.csv"
+        self.output_path = f'{config["folders"]["results_folder"]}/{round(random() * 10**20)}.csv'
         self.ids = self.data.id
         self.transformer = Transformer()
 
@@ -59,10 +59,8 @@ class Encoding(ConfigTool):
         
         header = ["id"] + self.dataset_encoded.columns[:-1].tolist()
         self.dataset_encoded = self.dataset_encoded[header]
-
-        self.save_csv_on_static(self.dataset_encoded , self.output_path)
-        self.output_df_encoded = f"{self.static_folder}/{self.output_path}"
-        return {"path": self.output_df_encoded}
+        self.dataset_encoded.to_csv(self.output_path)
+        return {"path": self.output_path}
 
     def transform_data(self):
         if self.options["kernel"] != "":

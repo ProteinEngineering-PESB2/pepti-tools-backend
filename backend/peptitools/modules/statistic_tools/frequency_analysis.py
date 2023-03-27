@@ -11,30 +11,10 @@ class FrequencyAnalysis(ConfigTool):
 
     def __init__(self, data, is_file, config):
         super().__init__("frequency", data, config, is_file, not is_file)
-        self.canonical_residues = [
-            "A",
-            "R",
-            "N",
-            "D",
-            "C",
-            "E",
-            "Q",
-            "G",
-            "H",
-            "I",
-            "L",
-            "K",
-            "M",
-            "F",
-            "P",
-            "S",
-            "T",
-            "W",
-            "Y",
-            "V",
-        ]
-        json_file_path = self.temp_file_path.replace(".fasta", ".json").split("/")[-1]
-        self.output_path = f"{self.temp_folder}/frequency/{json_file_path}"
+        self.canonical_residues = [ "A","R","N","D","C",
+                                    "E","Q","G","H","I",
+                                    "L","K","M","F","P",
+                                    "S","T","W","Y","V"]
         self.dict_counts_seq = []
 
     def count_canonical_residues(self, sequence):

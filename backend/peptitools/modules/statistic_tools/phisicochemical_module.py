@@ -6,7 +6,6 @@ from modlamp.descriptors import GlobalDescriptor
 from modlamp.plot import helical_wheel, plot_profile
 from peptitools.modules.utils import ConfigTool
 
-
 class PhysicochemicalProperties(ConfigTool):
     """Physicochemical Class"""
 

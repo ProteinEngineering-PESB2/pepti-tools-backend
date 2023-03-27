@@ -1,6 +1,5 @@
 """Alignment clustering module"""
 import pandas as pd
-
 from peptitools.modules.machine_learning_tools.clustering_methods.graph_clustering import GraphClustering
 from peptitools.modules.bioinformatic_tools.msa_module import MultipleSequenceAlignment
 

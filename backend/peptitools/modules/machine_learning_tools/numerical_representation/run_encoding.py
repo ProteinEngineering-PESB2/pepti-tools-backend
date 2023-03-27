@@ -1,6 +1,4 @@
 """Encoding module"""
-import os
-import subprocess
 from random import random
 from peptitools.modules.utils import fasta2df
 from peptitools.modules.machine_learning_tools.numerical_representation.one_hot_encoding import OneHotEncoding
@@ -14,8 +12,8 @@ import pandas as pd
 
 class Encoding(ConfigTool):
     """Encoding class"""
-    def __init__(self, data, options, is_file, config, is_fasta = True):
-        super().__init__("encoding", data, config, is_file, is_fasta)
+    def __init__(self, data, options, is_file, config, is_fasta = True, api_form = "encoding"):
+        super().__init__(api_form, data, config, is_file, is_fasta)
         self.options = options
         if is_fasta:
             self.data = fasta2df(data)

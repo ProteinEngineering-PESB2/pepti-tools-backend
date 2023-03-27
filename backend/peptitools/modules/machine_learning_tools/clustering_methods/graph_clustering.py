@@ -6,14 +6,13 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 from matplotlib.colors import to_hex
-from peptitools.modules.utils import ConfigTool
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
 class GraphClustering(Encoding):
     """Graph clustering class"""
 
     def __init__(self, data, options, is_file, config):
-        super().__init__(data, options, is_file, config)
+        super().__init__(data, options, is_file, config, "clustering")
         self.graph_data = nx.Graph()
         self.partition = None
         self.modularity_value = None
@@ -69,7 +68,8 @@ class GraphClustering(Encoding):
             row = [element, self.partition[element]]
             matrix_group.append(row)
         self.results = pd.DataFrame(matrix_group, columns=["id", "label"])
-        self.save_csv_on_static(self.results, self.output_path)
+
+        self.results.to_csv(self.output_path)
 
     def parse_response(self):
         """Create response json"""
@@ -77,7 +77,7 @@ class GraphClustering(Encoding):
         response = {}
         response.update({"status": "success"})
         response.update({"data": json.loads(self.results.to_json(orient="records"))})
-        response.update({"encoding_path": f"/files/{self.output_path}"})
+        response.update({"encoding_path": self.output_path})
         response.update({"performance": {"Modularity": self.modularity_value}})
         self.filter_data.rename(
             columns={"id_1": "source", "id_2": "target"}, inplace=True

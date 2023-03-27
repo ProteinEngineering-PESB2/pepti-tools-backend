@@ -1,17 +1,14 @@
 """Supervised learning module"""
-import pandas as pd
 from joblib import dump
 from peptitools.modules.machine_learning_tools.transformer.transformation_data import Transformer
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 from peptitools.modules.machine_learning_tools.training_supervised_learning.run_algorithm import RunAlgorithm
-from peptitools.modules.utils import ConfigTool
-
 
 class SupervisedLearning(Encoding):
     """Supervised Learning class"""
 
     def __init__(self, data, options, is_file, config, is_fasta):
-        super().__init__(data, options, is_file, config, is_fasta)
+        super().__init__(data, options, is_file, config, is_fasta, "supervised_learning")
         self.options = options
         self.task = self.options["task"]
         self.algorithm = self.options["algorithm"]

@@ -1,6 +1,5 @@
 """Response training module"""
 import math
-
 import numpy as np
 from scipy.stats import kendalltau, pearsonr, spearmanr
 from sklearn.metrics import confusion_matrix

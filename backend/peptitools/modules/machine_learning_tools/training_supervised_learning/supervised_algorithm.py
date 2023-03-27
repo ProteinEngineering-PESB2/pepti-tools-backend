@@ -2,7 +2,6 @@
 from sklearn.model_selection import train_test_split
 from peptitools.modules.machine_learning_tools.training_supervised_learning.response_training import ResponseTrainingModel
 
-
 class ModelAlgorithm:
     """Model algorithm class"""
 

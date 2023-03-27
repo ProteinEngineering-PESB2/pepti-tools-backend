@@ -17,7 +17,7 @@ class MultipleSequenceAlignment(ConfigTool):
     def __init__(self, data, is_file, config, config_module="msa"):
         super().__init__(config_module, data, config, is_file)
         self.output_aln_file = os.path.realpath(f"{self.results_folder}/{round(random() * 10**20)}.aln")
-        self.output_dist_file = self.output_aln_file.replace("aln", "mat")
+        self.output_dist_file = self.output_aln_file.replace(".aln", ".dist")
         self.heatmap_path = self.output_aln_file.replace(".aln", "_heatmap.png")
         self.dendrogram_path = self.output_aln_file.replace(".aln", "_dendrogram.png")
 

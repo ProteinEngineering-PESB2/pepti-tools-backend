@@ -1,11 +1,8 @@
 """Activity Prediction module"""
 import multiprocessing as mp
 from random import random
-
 import pandas as pd
 from joblib import load
-
-from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 from peptitools.modules.utils import ConfigTool
 from peptitools.modules.machine_learning_tools.numerical_representation.physicochemical_properties import Physicochemical
 from peptitools.modules.machine_learning_tools.numerical_representation.fft_encoding import FftEncoding

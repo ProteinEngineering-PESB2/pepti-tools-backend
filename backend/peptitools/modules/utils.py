@@ -96,12 +96,13 @@ class CsvFile:
             message = "Data has null values"
         if not self.correct_columns():
             message = "Incorrect columns"
-        if not self.unique_ids():
-            message = "Duplicated ids"
+        duplicated_id = self.unique_ids()
+        if len(duplicated_id) > 0:
+            message = f"Duplicated ids.{new_line}{new_line.join(duplicated_id)}"
         if not self.less_than_n():
-            message = "Too many sequences"
+            message = f"Too many sequences.{new_line}Use {self.max_number_sequences} or less."
         if not self.more_than_n():
-            message = "Too few sequences"
+            message = f"Too few sequences.{new_line}Use {self.min_number_sequences} or more."
         invalid_protein_ids = self.invalid_proteins()
         if len(invalid_protein_ids) > 0:
             message = f"There are some invalid sequences, just use aminoacids.{new_line}{new_line.join(invalid_protein_ids)}"
@@ -113,7 +114,7 @@ class CsvFile:
         return {"status": "success"}
 
     def unique_ids(self):
-        return self.data.duplicated("id").sum() == 0
+        return self.data.id[self.data.id.duplicated()]
 
     def correct_columns(self):
         return list(self.data.columns) == ["id", "sequence", "target"]
@@ -165,12 +166,13 @@ class FastaFile:
         message = ""
         if not self.is_fasta():
             message = "Not a fasta file / ASCII error"
-        if not self.unique_ids():
-            message = "Duplicated ids"
+        duplicated_ids = self.unique_ids()
+        if len(duplicated_ids) > 0:
+            message = f"Duplicated ids.\n{new_line.join(duplicated_ids.tolist())}"
         if not self.less_than_n():
-            message = f"Too many sequences\nPlease, use {self.max_number_sequences} sequences or less"
+            message = f"Too many sequences.{new_line}Use {self.max_number_sequences} or less."
         if not self.more_than_n():
-            message = f"Too few sequences\nPlease, use {self.min_number_sequences} sequences or more"
+            message = f"Too few sequences.{new_line}Use {self.min_number_sequences} or more."
         invalid_protein_ids = self.invalid_proteins()
         if len(invalid_protein_ids) > 0:
             message = f"There are some invalid sequences, just use aminoacids.{new_line}{new_line.join(invalid_protein_ids)}"
@@ -182,8 +184,9 @@ class FastaFile:
         return {"status": "success"}
 
     def unique_ids(self):
-        ids = [sequence.id for sequence in self.fasta]
-        return len(set(ids)) == len(ids)
+        ids =pd.Series([sequence.id for sequence in self.fasta])
+        duplicated_ids = ids[ids.duplicated()]
+        return duplicated_ids
 
     def is_fasta(self):
         return self.fasta is not None

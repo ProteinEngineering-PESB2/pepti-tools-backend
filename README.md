@@ -1,7 +1,8 @@
 # Pepti-tools backend
 ## Usage
+Clone repository
 
-Download activity prediction model from {} and save it on backend folder 
+Download activity_models.rar from https://drive.google.com/file/d/1cNsgqLvr7si0iAHmZyYLr1E3wSAcWTrE/view?usp=sharing and save it on backend/files/ folder 
 
 Then, with docker compose:
 

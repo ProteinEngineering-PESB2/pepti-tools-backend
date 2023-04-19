@@ -11,8 +11,8 @@ from peptitools.modules.machine_learning_tools.numerical_representation.run_enco
 class GraphClustering(Encoding):
     """Graph clustering class"""
 
-    def __init__(self, data, options, is_file, config):
-        super().__init__(data, options, is_file, config, "clustering")
+    def __init__(self, data, config, options):
+        super().__init__(data, config, options)
         self.graph_data = nx.Graph()
         self.partition = None
         self.modularity_value = None

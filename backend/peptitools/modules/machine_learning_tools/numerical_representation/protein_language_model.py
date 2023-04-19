@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
 
 class Bioembeddings(object):
 
@@ -24,7 +23,7 @@ class Bioembeddings(object):
         self.embeddings = None
         self.np_data = None
 
-    def __apply_embedding(self, model, ensemble_id = None, half_precision_model = None):
+    def __apply_embedding(self, model):
         if self.device != None:
             self.embedder = model(device=self.device)
         else:
@@ -39,7 +38,7 @@ class Bioembeddings(object):
 
     def __reducing(self):
         self.np_data = np.zeros(shape=(len(self.dataset), self.embedder.embedding_dimension))
-        for idx, embed in tqdm(enumerate(self.embeddings), desc="Reducing embeddings"):
+        for idx, embed in enumerate(self.embeddings):
             self.np_data[idx] = self.embedder.reduce_per_protein(embed)
 
     def apply_bepler(self):
@@ -61,6 +60,14 @@ class Bioembeddings(object):
     def apply_word2vec(self):
         from bio_embeddings.embed import Word2VecEmbedder
         return self.__apply_embedding(Word2VecEmbedder)
+    
+    def apply_seqvec(self):
+        from bio_embeddings.embed import SeqVecEmbedder
+        return self.__apply_embedding(SeqVecEmbedder)
+    
+    def apply_seqvec(self):
+        from bio_embeddings.embed import UniRepEmbedder
+        return self.__apply_embedding(UniRepEmbedder)
     
     def parse_output(self):
         header = ["p_{}".format(i) for i in range(len(self.np_data[0]))]

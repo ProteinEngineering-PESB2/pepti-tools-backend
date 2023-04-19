@@ -1,14 +1,16 @@
 """Gene ontology module"""
 import subprocess
+import os
+from random import random
 import pandas as pd
-from peptitools.modules.utils import ConfigTool
 
-class GeneOntology(ConfigTool):
+class GeneOntology:
     """Gene ontology class"""
-
-    def __init__(self, data, options, is_file, config):
-        super().__init__("gene_ontology", data, config, is_file, not is_file)
-        self.output_path = self.temp_file_path.replace(".fasta", ".result")
+    def __init__(self, fasta_path, config, options):
+        self.fasta_path = fasta_path
+        self.config = config
+        self.results_folder = config["folders"]["results_folder"]
+        self.output_path = os.path.realpath(f"{self.results_folder}/{round(random() * 10**20)}.aln")
         self.molecular_function = options["molecular_function"]
         self.biological_process = options["biological_process"]
         self.celular_component = options["celular_component"]
@@ -25,20 +27,26 @@ class GeneOntology(ConfigTool):
             ontologies.append("CCO")
         return ",".join(ontologies)
 
-    def process(self):
+    def run_process(self):
         """Execute metastudent and return results"""
         command = [
             "metastudent",
             "-i",
-            self.temp_file_path,
+            self.fasta_path,
             "-o",
             self.output_path,
             "--ontologies",
             self.ontologies,
         ]
         subprocess.check_output(command)
-        result = self.find_and_load_data()
-        return result
+        response = self.find_and_load_data()
+
+        if len(response) == 0:
+            return {
+                "status": "warning",
+                "description": "There's no significant results for this sequences"
+            }
+        return response
 
     def find_and_load_data(self):
         """Parse metastudent results and returns json"""

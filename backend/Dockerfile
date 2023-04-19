@@ -13,6 +13,7 @@ RUN echo "conda activate peptitools" >> ~/.bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 RUN conda install -c bioconda pfam_scan
 RUN conda install -c bioconda clustalo
+#bioembeddings
 RUN conda install -c conda-forge bio-embeddings
 RUN conda install -c conda-forge bio-embeddings-plus
 RUN conda install -c conda-forge bio-embeddings-bepler

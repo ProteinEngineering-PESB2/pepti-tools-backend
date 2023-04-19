@@ -8,3 +8,5 @@ matplotlib
 networkx
 python-louvain
 seaborn
+python-Levenshtein
+split-fasta

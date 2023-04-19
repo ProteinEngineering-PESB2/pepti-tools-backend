@@ -7,8 +7,8 @@ from peptitools.modules.machine_learning_tools.training_supervised_learning.run_
 class SupervisedLearning(Encoding):
     """Supervised Learning class"""
 
-    def __init__(self, data, options, is_file, config, is_fasta):
-        super().__init__(data, options, is_file, config, is_fasta, "supervised_learning")
+    def __init__(self, data, config, options):
+        super().__init__(data, config, options)
         self.options = options
         self.task = self.options["task"]
         self.algorithm = self.options["algorithm"]
@@ -23,9 +23,9 @@ class SupervisedLearning(Encoding):
         
         self.model = None
 
-    def run(self):
+    def run_process(self):
         """Runs encoding, preprocessing and build ML model"""
-        self.process_encoding()
+        self.run_encoding()
         self.dataset_encoded.drop(["id"], axis=1, inplace=True)
         run_instance = RunAlgorithm(
             self.dataset_encoded,

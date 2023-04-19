@@ -3,23 +3,22 @@ import os
 import re
 import subprocess
 import pandas as pd
-from peptitools.modules.utils import ConfigTool
+#from peptitools.modules.utils import ConfigTool
 
-class Pfam(ConfigTool):
+class Pfam:
     """Pfam class"""
 
-    def __init__(self, data, is_file, config):
-        super().__init__("pfam", data, config, is_file)
-        self.create_csv_from_fasta()
+    def __init__(self, fasta_path, config):
+        self.fasta_path = fasta_path
 
-    def process(self):
+    def run_process(self):
         """Use pfam_scan and parse results"""
         command = [
             "pfam_scan.pl",
             "-dir",
             os.getenv("PFAM_DB"),
             "-fasta",
-            self.temp_csv_file,
+            self.fasta_path,
         ]
         text = subprocess.check_output(command).decode()
 
@@ -71,6 +70,9 @@ class Pfam(ConfigTool):
                 .to_dict(orient="records")
             )
             response.append({"id": seq_id, "data": data})
-
-        self.delete_file()
+        if len(response) == 0:
+            return {
+                "status": "warning",
+                "description": "There's no significant results for this sequences",
+            }
         return response

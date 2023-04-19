@@ -11,20 +11,19 @@ from peptitools.modules.machine_learning_tools.clustering_methods import (
     clustering_algorithm,
     evaluation_performances,
 )
-from peptitools.modules.utils import ConfigTool
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 
 class Clustering(Encoding):
     """Clustering process class"""
 
-    def __init__(self, data, options, is_file, config):
-        super().__init__(data, options, is_file, config)
+    def __init__(self, data, config, options):
+        super().__init__(data, config, options)
         self.dataset_encoded_path = f"{self.results_folder}/{round(random() * 10**20)}.csv"
         self.options = options
 
-    def process_clustering(self):
+    def run_process(self):
         """Apply clustering process"""
-        self.process_encoding()
+        self.run_encoding()
         dataset_to_cluster = self.dataset_encoded.copy()
         dataset_to_cluster.drop(["id"], inplace=True, axis=1)
         clustering_process = clustering_algorithm.ApplyClustering(dataset_to_cluster)

@@ -3,19 +3,17 @@
 import pandas as pd
 from Bio import SeqIO
 
-from peptitools.modules.utils import ConfigTool
 
-
-class FrequencyAnalysis(ConfigTool):
+class FrequencyAnalysis:
     """Frequency Analysis class"""
 
-    def __init__(self, data, is_file, config):
-        super().__init__("frequency", data, config, is_file, not is_file)
+    def __init__(self, input_path):
         self.canonical_residues = [ "A","R","N","D","C",
                                     "E","Q","G","H","I",
                                     "L","K","M","F","P",
                                     "S","T","W","Y","V"]
         self.dict_counts_seq = []
+        self.temp_file_path = input_path
 
     def count_canonical_residues(self, sequence):
         """Count canonical residues in a specific aa sequence"""
@@ -25,7 +23,7 @@ class FrequencyAnalysis(ConfigTool):
         }
         return dict_counts
 
-    def exec_process(self):
+    def run_process(self):
         """Calls to count_canonical_residues in all sequences"""
         records = list(SeqIO.parse(self.temp_file_path, "fasta"))
         for record in records:
@@ -37,8 +35,11 @@ class FrequencyAnalysis(ConfigTool):
                     "counts": self.count_canonical_residues(sequence),
                 }
             )
-        self.delete_file()
-        return self.dict_counts_seq
+        summary = None
+        if len(self.dict_counts_seq) > 1:
+            summary = self.get_average()
+            return {"single": self.dict_counts_seq, "average": summary}
+        return {"single": self.dict_counts_seq}
 
     def get_average(self):
         """Get statistics of counts"""

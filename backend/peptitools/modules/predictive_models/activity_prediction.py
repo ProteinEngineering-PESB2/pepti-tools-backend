@@ -3,20 +3,20 @@ import multiprocessing as mp
 from random import random
 import pandas as pd
 from joblib import load
-from peptitools.modules.utils import ConfigTool
 from peptitools.modules.machine_learning_tools.numerical_representation.physicochemical_properties import Physicochemical
 from peptitools.modules.machine_learning_tools.numerical_representation.fft_encoding import FftEncoding
 
 
-class ActivityPrediction(ConfigTool):
+class ActivityPrediction:
     """Activity Prediction Class"""
 
-    def __init__(self, data, options, is_file, config):
-        super().__init__("activity_prediction", data, config, is_file)
+    def __init__(self, input_path, config, options):
+        self.data = pd.read_csv(input_path)
         self.options = options
         self.config = config
         self.encoder_dataset = pd.read_csv(config["folders"]["encoders_dataset"], index_col=0)
         self.models_folder = config["folders"]["activity_prediction_models"]
+        self.results_folder = config["folders"]["results_folder"]
         self.dataset_encoded_path = f"{self.results_folder}/{round(random() * 10**20)}.csv"
         self.options = options
         self.full_dataset_encoded = pd.DataFrame()
@@ -25,8 +25,6 @@ class ActivityPrediction(ConfigTool):
 
     def __process_encoding_stage(self):
         """Encode sequences using selected method"""
-        with open(self.temp_file_path, "r", encoding="utf-8") as file:
-            self.data = self.create_df(file.read())
         for group in self.encoder_dataset.columns:
             physicochemical = Physicochemical(self.data, group, self.config["folders"]["encoders_dataset"], "id", "sequence")
             self.dataset_encoded = physicochemical.encode_dataset()

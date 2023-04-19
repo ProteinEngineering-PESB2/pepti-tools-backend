@@ -10,7 +10,8 @@ from peptitools.modules.machine_learning_tools.numerical_representation.run_enco
 
 from peptitools.modules.machine_learning_tools.transformer.tsne_process import TSNE
 from peptitools.modules.machine_learning_tools.training_supervised_learning.supervised_learning import SupervisedLearning
-from peptitools.modules.utils import Interface
+from peptitools.modules.utils import parse_response
+import json
 
 ##Reads config file and asign folder names.
 config = configparser.ConfigParser()
@@ -23,48 +24,42 @@ machine_learning_blueprint = Blueprint("machine_learning_blueprint", __name__)
 @machine_learning_blueprint.route("/encoding/", methods=["POST"])
 def apply_encoding():
     """Encode a fasta file or text"""
-    data, options, is_file = Interface(request).parse_with_options()
-    code = Encoding(data, options, is_file, config)
-    check = code.check
+    check = parse_response(request, config, "encoding", False, "csv")
     if check["status"] == "error":
         return check
-    result = code.process_encoding()
-    return {"result": result}
+    enc = Encoding(check["path"], config, json.loads(request.form["options"]))
+    result = enc.run_encoding()
+    return {"result": result, "status": "success"}
 
 @machine_learning_blueprint.route("/clustering/", methods=["POST"])
 def api_clustering():
     """It performs clustering from a fasta file or text"""
-    data, options, is_file = Interface(request).parse_with_options()
-    clustering_object = Clustering(data, options, is_file, config)
-    check = clustering_object.check
+    check = parse_response(request, config, "clustering", False, "csv")
     if check["status"] == "error":
         return check
-    result = clustering_object.process_clustering()
-    return {"result": result}
-
+    clust = Clustering(check["path"], config, json.loads(request.form["options"]))
+    result = clust.run_process()
+    return {"result": result, "status": "success"}
 
 @machine_learning_blueprint.route("/alignment_clustering/", methods=["POST"])
 def api_alignment_clustering():
     """It performs clustering from a fasta file or text"""
-    data, is_file = Interface(request).parse_without_options()
-    clustering_object = AlignmentClustering(data, is_file, config)
-    check = clustering_object.check
+    check = parse_response(request, config, "clustering", False, "fasta")
     if check["status"] == "error":
         return check
-    result = clustering_object.run_clustering()
-    return {"result": result}
-
+    clust = AlignmentClustering(check["path"], config)
+    result = clust.run_clustering()
+    return {"result": result, "status": "success"}
 
 @machine_learning_blueprint.route("/distance_clustering/", methods=["POST"])
 def api_distance_clustering():
     """It performs clustering from a fasta file or text"""
-    data, options, is_file = Interface(request).parse_with_options()
-    clustering_object = DistanceClustering(data, options, is_file, config)
-    check = clustering_object.check
+    check = parse_response(request, config, "clustering", False, "csv")
     if check["status"] == "error":
         return check
-    result = clustering_object.run_process()
-    return {"result": result}
+    clust = DistanceClustering(check["path"], config, json.loads(request.form["options"]))
+    result = clust.run_clustering()
+    return {"result": result, "status": "success"}
 
 @machine_learning_blueprint.route("/pca/", methods=["POST"])
 def api_pca():
@@ -76,11 +71,9 @@ def api_pca():
 @machine_learning_blueprint.route("/supervised_learning/", methods=["POST"])
 def api_supervised_learning():
     """It performs a Supervised learning from a csv file"""
-    data, options, is_file = Interface(request).parse_with_options()
-    sl_obj = SupervisedLearning(data, options, is_file, config, is_fasta=False)
-    check = sl_obj.check
+    check = parse_response(request, config, "supervised_learning", True, "csv")
     if check["status"] == "error":
         return check
-    result = sl_obj.run()
-    job_path = sl_obj.job_path
-    return {"result": result, "job_path": job_path}
+    sl = SupervisedLearning(check["path"], config, json.loads(request.form["options"]))
+    result = sl.run_process()
+    return {"result": result, "status": "success"}

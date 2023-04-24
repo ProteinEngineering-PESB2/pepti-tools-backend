@@ -2,18 +2,19 @@
 
 import pandas as pd
 from Bio import SeqIO
-
-
+from peptitools.modules.statistic_tools.statistics import apply_kruskal, distribution, apply_tukey
 class FrequencyAnalysis:
     """Frequency Analysis class"""
 
-    def __init__(self, input_path):
+    def __init__(self, input_path, options):
         self.canonical_residues = [ "A","R","N","D","C",
                                     "E","Q","G","H","I",
                                     "L","K","M","F","P",
                                     "S","T","W","Y","V"]
         self.dict_counts_seq = []
         self.temp_file_path = input_path
+        self.options = options
+        self.pvalue = float(options["pvalue"])
 
     def count_canonical_residues(self, sequence):
         """Count canonical residues in a specific aa sequence"""
@@ -26,33 +27,17 @@ class FrequencyAnalysis:
     def run_process(self):
         """Calls to count_canonical_residues in all sequences"""
         records = list(SeqIO.parse(self.temp_file_path, "fasta"))
-        for record in records:
-            sequence = str(record.seq)
-            id_sequence = record.id
-            self.dict_counts_seq.append(
-                {
-                    "id_seq": id_sequence,
-                    "counts": self.count_canonical_residues(sequence),
-                }
-            )
-        summary = None
-        if len(self.dict_counts_seq) > 1:
-            summary = self.get_average()
-            return {"single": self.dict_counts_seq, "average": summary}
-        return {"single": self.dict_counts_seq}
+        records = pd.read_csv(self.temp_file_path)
+        for _, record in records.iterrows():
+            sequence = str(record.sequence)
+            self.count_canonical_residues(sequence)
+            counts = self.count_canonical_residues(sequence)
+            counts["id"] = record.id
+            counts["target"] = record.target
+            self.dict_counts_seq.append(counts)
+        df = pd.json_normalize(self.dict_counts_seq)
+        distribution_result = distribution(df)
+        kruskal_result = apply_kruskal(df, self.pvalue)
+        tukey_result = apply_tukey(kruskal_result, df, self.pvalue)
+        return {"distribution": distribution_result, "kruskal": kruskal_result, "tukey": tukey_result}
 
-    def get_average(self):
-        """Get statistics of counts"""
-        df_counts = pd.json_normalize(self.dict_counts_seq, max_level=1)
-        df_counts.drop(["id_seq"], inplace=True, axis=1)
-        df_counts.rename(
-            columns={a: a.replace("counts.", "") for a in df_counts.columns},
-            inplace=True,
-        )
-        description = df_counts.describe().round(2)
-        error = description.loc["std"] / 2
-        return {
-            "X": description.columns.tolist(),
-            "Y": description.loc["mean"].to_list(),
-            "error": error.to_list(),
-        }

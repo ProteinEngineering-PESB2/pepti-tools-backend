@@ -72,6 +72,7 @@ class SupervisedLearning(Encoding):
         self.model = run_instance.get_model()
         self.job_path = self.output_path.replace(".csv", ".joblib")
         self.dump_joblib()
+        response_training["job_path"] = self.job_path
         return response_training
 
     def dump_joblib(self):

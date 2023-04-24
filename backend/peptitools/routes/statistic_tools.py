@@ -4,9 +4,10 @@ import configparser
 from flask import Blueprint, request
 
 from peptitools.modules.statistic_tools.frequency_analysis import FrequencyAnalysis
-from peptitools.modules.statistic_tools.phisicochemical_module import PhysicochemicalProperties
+from peptitools.modules.statistic_tools.physicochemical_module import PhysicochemicalProperties
 from peptitools.modules.utils import Interface
-
+from peptitools.modules.utils import parse_response
+import json
 ##Reads config file and asign folder names.
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -17,25 +18,21 @@ statistic_tools_blueprint = Blueprint("statistic_tools_blueprint", __name__)
 @statistic_tools_blueprint.route("/frequency/", methods=["POST"])
 def apply_frequency():
     """Frequency module api"""
-    data, is_file = Interface(request).parse_without_options()
-    frequency_object = FrequencyAnalysis(data, is_file, config)
-    check = frequency_object.check
+    check = parse_response(request, config, "frequency", True, "csv")
     if check["status"] == "error":
         return check
-    result = frequency_object.exec_process()
-    if len(result) > 1:
-        summary = frequency_object.get_average()
-        return {"result": result, "summary": summary}
-    return {"result": result}
+    phy = FrequencyAnalysis(check["path"], json.loads(request.form["options"]))
+    result = phy.run_process()
+    return {"status": "success", "result": result}
+    
 
-
-@statistic_tools_blueprint.route("/phisicochemical/", methods=["POST"])
+@statistic_tools_blueprint.route("/physicochemical/", methods=["POST"])
 def apply_physicochemical():
     """Physicochemical characterization module api"""
-    data, options, is_file = Interface(request).parse_with_options()
-    modlamp = PhysicochemicalProperties(data, options, is_file, config)
-    check = modlamp.check
+    check = parse_response(request, config, "physicochemical", True, "csv")
     if check["status"] == "error":
         return check
-    result = modlamp.execute_modlamp()
-    return {"result": result}
+    phy = PhysicochemicalProperties(check["path"], config, json.loads(request.form["options"]))
+    result = phy.run_process()
+    return {"status": "success", "result": result}
+    

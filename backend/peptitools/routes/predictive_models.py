@@ -5,7 +5,6 @@ from flask import Blueprint, request
 import json
 from peptitools.modules.predictive_models.activity_prediction import ActivityPrediction
 from peptitools.modules.predictive_models.activity_list import ActivityList
-from peptitools.modules.utils import Interface
 from peptitools.modules.utils import parse_response
 
 config = configparser.ConfigParser()

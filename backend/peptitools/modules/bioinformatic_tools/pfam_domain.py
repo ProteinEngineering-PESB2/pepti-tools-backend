@@ -75,4 +75,4 @@ class Pfam:
                 "status": "warning",
                 "description": "There's no significant results for this sequences",
             }
-        return response
+        return {"result": response, "status": "success"}

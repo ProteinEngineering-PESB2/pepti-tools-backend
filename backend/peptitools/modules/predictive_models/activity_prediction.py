@@ -18,7 +18,6 @@ class ActivityPrediction:
         self.models_folder = config["folders"]["activity_prediction_models"]
         self.results_folder = config["folders"]["results_folder"]
         self.dataset_encoded_path = f"{self.results_folder}/{round(random() * 10**20)}.csv"
-        self.options = options
         self.full_dataset_encoded = pd.DataFrame()
         self.cores = mp.cpu_count()
         self.activities_list = pd.read_csv(config["folders"]["activity_table"])
@@ -72,22 +71,12 @@ class ActivityPrediction:
                 for idactivity in self.options["activities"]
             ]
         )
-        response = []
-        for idpeptide in df_evaluation.idpeptide.unique():
-            sub_df = df_evaluation[df_evaluation["idpeptide"] == idpeptide][
-                ["activity", "probability"]
-            ]
-            response.append(
-                {
-                    "id": idpeptide,
-                    "data": sub_df.values.tolist(),
-                    "columns": [
-                        " ".join(a.capitalize().split("_"))
-                        for a in sub_df.columns.tolist()
-                    ],
-                }
-            )
-        return response
+        df_evaluation = df_evaluation[["idpeptide", "activity", "probability"]]
+        df_evaluation = df_evaluation.rename(columns={"idpeptide": "ID", "activity": "Activity", "probability": "Probability"})
+        return {
+            "columns": df_evaluation.columns.to_list(),
+            "data": df_evaluation.values.tolist()
+        }
 
     def run_process(self):
         """Run all activity prediction process"""

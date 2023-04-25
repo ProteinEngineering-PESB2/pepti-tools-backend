@@ -78,7 +78,7 @@ class GraphClustering(Encoding):
         response.update({"status": "success"})
         response.update({"data": json.loads(self.results.to_json(orient="records"))})
         response.update({"encoding_path": self.output_path})
-        response.update({"performance": {"Modularity": self.modularity_value}})
+        response.update({"performance": {"columns": ["Modularity"], "data": [[self.modularity_value]]}})
         self.filter_data.rename(
             columns={"id_1": "source", "id_2": "target"}, inplace=True
         )

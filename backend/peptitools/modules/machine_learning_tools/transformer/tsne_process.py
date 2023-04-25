@@ -12,9 +12,9 @@ from peptitools.modules.machine_learning_tools.transformer.transformation_data i
 class TSNE:
     """PCA class"""
 
-    def __init__(self, params, static_folder):
+    def __init__(self, path, static_folder):
         self.static_folder = static_folder
-        self.path = params["path"]
+        self.path = path
         self.data = pd.read_csv(self.path)
         self.dataset_to_transform = self.data[
             [col for col in self.data.columns if "p_" in col]

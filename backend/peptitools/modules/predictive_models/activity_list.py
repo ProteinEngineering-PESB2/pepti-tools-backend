@@ -12,4 +12,5 @@ class ActivityList:
         df_models["idactivity"] = all_models
         merged = activities.merge(df_models, on="idactivity")[["idactivity", "name"]]
         merged.rename(columns={"idactivity": "value", "name": "label"}, inplace=True)
+        merged = merged.sort_values(by=["label"])
         return json.loads(merged.to_json(orient="records"))

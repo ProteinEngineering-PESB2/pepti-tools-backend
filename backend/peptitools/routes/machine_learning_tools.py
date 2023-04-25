@@ -61,13 +61,6 @@ def api_distance_clustering():
     result = clust.run_clustering()
     return {"result": result, "status": "success"}
 
-@machine_learning_blueprint.route("/pca/", methods=["POST"])
-def api_pca():
-    """It performs a PCA from a stored dataframe"""
-    pca = TSNE(request.json["params"], config["folders"]["static_folder"])
-    result, path = pca.apply_tsne()
-    return {"result": result, "path": path}
-
 @machine_learning_blueprint.route("/supervised_learning/", methods=["POST"])
 def api_supervised_learning():
     """It performs a Supervised learning from a csv file"""

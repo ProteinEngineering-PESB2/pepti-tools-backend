@@ -7,12 +7,11 @@ import os
 class StructuralCharacterization:
     """Structural Properties Class"""
 
-    def __init__(self, fasta_path, config, options):
+    def __init__(self, fasta_path, config):
         self.fasta_path = fasta_path
         self.results_folder = config["folders"]["results_folder"]
         self.temp_folder = config["folders"]["temp_folder"]
         self.output_path = f"{self.results_folder}/{basename(fasta_path)}"
-        self.options = options
         self.predictions = ["ss3", "ss8", "acc", "diso", "tm2", "tm8"]
 
     def execute_predict_property(self, splitted_fasta):
@@ -36,14 +35,13 @@ class StructuralCharacterization:
             {"id": 1, "label": self.name, "sequence": lines[1].replace("\n", "")}
         ]
         for index, prediction_name in enumerate(self.predictions):
-            if self.options[prediction_name]:
-                self.alignment.append(
-                    {
-                        "id": index + 2,
-                        "label": prediction_name,
-                        "sequence": lines[index + 2].replace("\n", ""),
-                    }
-                )
+            self.alignment.append(
+                {
+                    "id": index + 2,
+                    "label": prediction_name,
+                    "sequence": lines[index + 2].replace("\n", ""),
+                }
+            )
 
     def run_process(self):
         """Run all process"""
@@ -63,4 +61,4 @@ class StructuralCharacterization:
                 "status": "warning",
                 "description": "There's no significant results for this sequences"
             }
-        return response
+        return {"status": "success", "result": response}

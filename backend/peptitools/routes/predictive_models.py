@@ -19,7 +19,6 @@ def apply_activity_prediction():
         return check
     pred = ActivityPrediction(check["path"], config, json.loads(request.form["options"]))
     result = pred.run_process()
-    print(result)
     return {"result": result, "status": "success"}
 
 

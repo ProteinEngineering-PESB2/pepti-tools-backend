@@ -5,19 +5,20 @@ from random import random
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import to_hex
-from scipy import stats
-
+import pandas as pd
 from peptitools.modules.machine_learning_tools.clustering_methods import (
     clustering_algorithm,
     evaluation_performances,
 )
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
+from peptitools.modules.machine_learning_tools.transformer.tsne_process import TSNE
 
 class Clustering(Encoding):
     """Clustering process class"""
 
     def __init__(self, data, config, options):
         super().__init__(data, config, options)
+        self.static_path = config["folders"]["static_folder"]
         self.dataset_encoded_path = f"{self.results_folder}/{round(random() * 10**20)}.csv"
         self.options = options
 
@@ -89,20 +90,23 @@ class Clustering(Encoding):
             )
             if performances[0] is not None:
                 performances_dict = {
-                    "calinski": performances[0].round(3),
-                    "siluetas": performances[1].round(3),
-                    "dalvies": performances[2].round(3),
+                    "columns": ["calinski", "siluetas", "davies"],
+                    "data": [[performances[0].round(3), performances[1].round(3), performances[2].round(3)]]
                 }
             else:
                 performances_dict = {
-                    "calinski": performances[0],
-                    "siluetas": performances[1],
-                    "dalvies": performances[2],
+                    "columns": ["calinski", "siluetas", "davies"],
+                    "data": [[performances[0], performances[1], performances[2]]]
                 }
+                
             response.update({"performance": performances_dict})
             response.update({"encoding_path": self.dataset_encoded_path})
-            response.update({"is_normal": self.verify_normality()})
-
+            pca = TSNE(self.dataset_encoded_path, self.static_path)
+            result, path = pca.apply_tsne()
+            response.update({"pca": {
+                "result": result, 
+                "path": path
+            }})
         else:  # Error
             response.update(
                 {
@@ -111,20 +115,6 @@ class Clustering(Encoding):
                 }
             )
         return response
-
-    def verify_normality(self):
-        """This function only confirms if data follows a
-        normal distribution using a shapiro test"""
-        is_normal = True
-        dataset_verify = self.dataset_encoded[
-            [col for col in self.dataset_encoded.columns if "P_" in col]
-        ]
-        for col in dataset_verify.columns:
-            result = stats.shapiro(dataset_verify[col])
-            pvalue = result.pvalue
-            if pvalue > 0.05:
-                is_normal = False
-        return is_normal
 
     def __generate_colors(self):
         """Generate colors using matplotlib"""

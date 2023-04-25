@@ -62,32 +62,6 @@ class MultipleSequenceAlignment:
         distance_table.drop([0], axis=1, inplace=True)
         self.z_values = distance_table.values.tolist()
 
-    def draw_heatmap(self):
-        """Use matplotlib and seaborn for to draw a heatmap of distances"""
-        plt.clf()
-        plt.figure(figsize=(20, 20))
-        if len(self.z_values) > 35:
-            fontsize = 10
-        elif len(self.z_values) > 30:
-            fontsize = 15
-        else:
-            fontsize = 20
-        sns.heatmap(
-            self.z_values,
-            linewidth=1,
-            xticklabels=self.x_labels,
-            yticklabels=self.x_labels,
-            annot=True,
-            cbar=False,
-            annot_kws={"fontsize": fontsize},
-            vmin=0,
-            vmax=1,
-        )
-        plt.xticks(fontsize=20, rotation=90)
-        plt.yticks(fontsize=20, rotation=0)
-        plt.tight_layout()
-        plt.savefig(self.heatmap_path)
-
     def draw_dendrogram(self):
         """Use matplotlib for to draw a dendrogram"""
         plt.clf()
@@ -106,12 +80,14 @@ class MultipleSequenceAlignment:
         """Run MSA functions"""
         self.execute_clustalo()
         self.parse_output()
-        self.draw_heatmap()
         self.draw_dendrogram()
         return {
-            "alignment": self.alignment,
-            "output_file": self.output_aln_file,
-            "distances_file": self.output_dist_file,
-            "image_heatmap": self.heatmap_path,
-            "dendrogram": self.dendrogram_path,
+            "result":{
+                "alignment": self.alignment,
+                "output_file": self.output_aln_file,
+                "distances_file": self.output_dist_file,
+                "image_heatmap": self.heatmap_path,
+                "dendrogram": self.dendrogram_path
+            },
+            "status": "success"
         }

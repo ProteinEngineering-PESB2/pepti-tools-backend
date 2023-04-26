@@ -179,7 +179,7 @@ class ResponseTrainingModel:
             r_2 = "ERROR"
         else:
             r_2 = response[1]
-        return {"pearsonr": round(r_1, 3), "pvalue": round(r_2, 3)}
+        return round(r_1, 3)
 
     def __calculated_spearman(self, real_values, predict_values):
         """Spearman correlation"""
@@ -192,7 +192,7 @@ class ResponseTrainingModel:
             r_2 = "ERROR"
         else:
             r_2 = response[1]
-        return {"spearmanr": round(r_1, 3), "pvalue": round(r_2, 3)}
+        return round(r_1, 3)
 
     def __calculate_kendall_tau(self, real_values, predict_values):
         """Kendall tau correlation"""
@@ -205,4 +205,4 @@ class ResponseTrainingModel:
             r_2 = "ERROR"
         else:
             r_2 = response[1]
-        return {"kendalltau": round(r_1, 3), "pvalue": round(r_2, 3)}
+        return round(r_1, 3)

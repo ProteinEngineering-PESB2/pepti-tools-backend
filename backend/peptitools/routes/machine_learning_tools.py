@@ -64,7 +64,7 @@ def api_distance_clustering():
 @machine_learning_blueprint.route("/supervised_learning/", methods=["POST"])
 def api_supervised_learning():
     """It performs a Supervised learning from a csv file"""
-    check = parse_response(request, config, "supervised_learning", True, "csv")
+    check = parse_response(request, config, "supervised_learning", True, "csv", task = json.loads(request.form["options"])["task"])
     if check["status"] == "error":
         return check
     sl = SupervisedLearning(check["path"], config, json.loads(request.form["options"]))

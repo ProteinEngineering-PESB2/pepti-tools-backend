@@ -3,7 +3,7 @@ from joblib import dump
 from peptitools.modules.machine_learning_tools.transformer.transformation_data import Transformer
 from peptitools.modules.machine_learning_tools.numerical_representation.run_encoding import Encoding
 from peptitools.modules.machine_learning_tools.training_supervised_learning.run_algorithm import RunAlgorithm
-
+import pandas as pd
 class SupervisedLearning(Encoding):
     """Supervised Learning class"""
 
@@ -36,6 +36,13 @@ class SupervisedLearning(Encoding):
             self.test_size,
         )
         response_training = run_instance.training_model()
+
+        performances = pd.DataFrame([response_training["performance"]])
+        performances["set"] = ["Training"]
+        if self.task == "regression":
+            corr = pd.DataFrame([response_training["corr"]])
+            corr["set"] = ["Training"]
+
         if self.test_size != 0:
             response_testing = run_instance.testing_model()
             if self.task == "regression":
@@ -69,6 +76,24 @@ class SupervisedLearning(Encoding):
                 del response_testing["analysis"]
 
             response_training.update(response_testing)
+
+            performances = pd.DataFrame([response_training["performance"], response_training["performance_testing"]])
+            performances["set"] = ["Training", "Testing"]
+
+            if self.task == "regression":
+                corr = pd.DataFrame([response_training["corr"], response_training["corr_testing"]])
+                corr["set"] = ["Training", "Testing"]
+
+
+        response_training["metrics"] = {
+            "data": performances.values.tolist(),
+            "columns": performances.columns.to_list()
+        }
+        if self.task == "regression":
+            response_training["corr_metrics"] = {
+                "data": corr.values.tolist(),
+                "columns": corr.columns.to_list()
+            }
         self.model = run_instance.get_model()
         self.job_path = self.output_path.replace(".csv", ".joblib")
         self.dump_joblib()

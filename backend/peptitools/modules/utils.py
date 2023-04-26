@@ -76,7 +76,7 @@ class ConfigTool:
 
 
 class CsvFile:
-    def __init__(self, path, config, config_name, needs_target):
+    def __init__(self, path, config, config_name, needs_target, task):
         self.path = path
         self.max_number_sequences = int(config[config_name]["max_sequences"])
         self.min_number_sequences = int(config[config_name]["min_sequences"])
@@ -85,6 +85,7 @@ class CsvFile:
         self.id_column = config["csv"]["id_column"]
         self.sequence_column = config["csv"]["sequence_column"]
         self.target_column = config["csv"]["target_column"]
+        self.task = task
 
         try:
             self.data = pd.read_csv(self.path)
@@ -131,9 +132,11 @@ class CsvFile:
         if len(invalid_lengths) > 0:
             message = f"There are some invalid sequences, use peptides with a length between {self.min_length} and {self.max_length}.{new_line}{new_line.join(invalid_lengths)}"
             return _error_message(message)
-
+        if not self.correct_target():
+            message = f"Please verify target column. Needs a {self.task} column."
+            return _error_message(message)
         return {"status": "success", "path": self.path}
-
+    
     def unique_ids(self):
         return self.data.id[self.data.id.duplicated()]
 
@@ -175,13 +178,23 @@ class CsvFile:
             incorrect_columns.append(self.target_column)
         return incorrect_columns
     
+    def correct_target(self):
+        if self.task == "regression":
+            try:
+                self.data.target.astype(float)
+                return True
+            except:
+                return False
+        return True
+
 class FastaFile:
-    def __init__(self, path, config, config_name, needs_target):
+    def __init__(self, path, config, config_name, needs_target, task):
         self.path = path
         self.max_number_sequences = int(config[config_name]["max_sequences"])
         self.min_number_sequences = int(config[config_name]["min_sequences"])
         self.max_length = int(config["global"]["max_length"])
         self.min_length = int(config["global"]["min_length"])
+        self.task = task
         try:
             self.fasta = list(SeqIO.parse(self.path, "fasta"))
             SeqIO.write(self.fasta, self.path, "fasta")
@@ -212,8 +225,8 @@ class FastaFile:
         invalid_lengths = self.__invalid_lengths()
         if len(invalid_lengths) > 0:
             message = f"There are invalid sequences.\nUse peptides with a length between {self.min_length} and {self.max_length} residues.{new_line}{new_line.join(invalid_lengths)}"
-        if self.needs_target:
-            self.target_verification()
+        if not self.target_verification():
+            message = f"Please verify target column. Needs a {self.task} column."
         if message != "":
             return _error_message(message)
 
@@ -256,9 +269,19 @@ class FastaFile:
                     target = a.description.split("|")[1]
                     if target is None and target.strip() != "":
                         return False
+                    return self.correct_target(target)
                 except:
                     return False
+        
 
+    def correct_target(self, target):
+        if self.task == "regression":
+            try:
+                float(target)
+                return True
+            except:
+                return False
+        return True
 
 class Interface:
     def __init__(self, request):
@@ -383,7 +406,7 @@ def save_file_from_text(text, path):
 def save_file_from_file(file, path):
     file.save(path)
 
-def parse_response(request, config, config_name, needs_target, output_format):
+def parse_response(request, config, config_name, needs_target, output_format, task = "clasification"):
     output_file_path = f"""{config["folders"]["temp_folder"]}/{str(round(random() * 10**20))}.{output_format}"""
     input_type = request.form["type"]
 
@@ -393,10 +416,10 @@ def parse_response(request, config, config_name, needs_target, output_format):
         save_file_from_file(request.files["file"], output_file_path)
 
     if input_type == "fasta_text" or input_type == "fasta_file":
-        fasta_obj = FastaFile(output_file_path, config, config_name, needs_target)
+        fasta_obj = FastaFile(output_file_path, config, config_name, needs_target, task)
         check = fasta_obj.verify()
     elif input_type == "csv_file":
-        csv_obj = CsvFile(output_file_path, config, config_name, needs_target)
+        csv_obj = CsvFile(output_file_path, config, config_name, needs_target, task)
         check = csv_obj.verify()
     
     if check["status"] == "error":

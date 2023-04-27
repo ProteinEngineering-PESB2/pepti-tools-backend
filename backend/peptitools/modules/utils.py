@@ -272,6 +272,7 @@ class FastaFile:
                     return self.correct_target(target)
                 except:
                     return False
+        return True
         
 
     def correct_target(self, target):
